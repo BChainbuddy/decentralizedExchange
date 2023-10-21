@@ -1,7 +1,14 @@
-"use client"; // This is a client components
+"use client";
+
 import { useState, useEffect } from "react";
 
-export default function Input({ chooseTokenInput, chosenTokenInput }) {
+export default function Input({
+  chooseTokenInput,
+  chosenTokenInput,
+  chooseTokenAddressInput,
+  chooseTokenDecimalsInput,
+  setInputAmount,
+}) {
   const [modal, showModal] = useState(false);
   const [tokens, setTokens] = useState([]);
   const [inputText, setInputText] = useState("");
@@ -14,12 +21,14 @@ export default function Input({ chooseTokenInput, chosenTokenInput }) {
     showModal(false);
   };
 
-  //   const willChooseToken = (a) => {
-  //     chooseToken(a);
-  //   };
-
-  function willChooseToken(a) {
-    chooseTokenInput(a);
+  function willChooseToken(symbol, address, decimals) {
+    console.log(`This is the chosen token symbol ${symbol}`);
+    console.log(`This is the chosen token address ${address}`);
+    console.log(`This is the chosen token decimals ${decimals}`);
+    chooseTokenInput(symbol);
+    chooseTokenAddressInput(address);
+    chooseTokenDecimalsInput(decimals);
+    closeModal();
   }
 
   const handleClose = (e) => {
@@ -65,6 +74,7 @@ export default function Input({ chooseTokenInput, chosenTokenInput }) {
           step="0.1"
           placeholder="100"
           min="0"
+          onChange={(e) => setInputAmount(e.target.value)}
         ></input>
         <button
           className="border-2 rounded-r-md px-3 hover:bg-zinc-300"
@@ -99,13 +109,17 @@ export default function Input({ chooseTokenInput, chosenTokenInput }) {
             >
               {tokens.map((token, index) => (
                 <button
-                  className="hover:bg-zinc-300 flex justify-center items-center border border-gray-600 py-2 space-x-1"
+                  className="hover-bg-zinc-300 flex justify-center items-center border border-gray-600 py-2 space-x-1"
                   key={`${token.symbol}-${index}`}
                   onClick={() => {
-                    willChooseToken(token.symbol);
+                    willChooseToken(
+                      token.symbol,
+                      token.address,
+                      token.decimals
+                    );
                   }}
                 >
-                  <img className="" src={token.logoURI} alt={token.symbol} />
+                  {/* <img className="" src={token.logoURI} alt={token.symbol} /> */}
                   <span className="">{token.symbol}</span>
                 </button>
               ))}

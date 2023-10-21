@@ -6,7 +6,7 @@ import Input from "./components/input";
 import Output from "./components/output";
 import Swap from "./components/swap";
 import Connect from "./components/connectButton";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 
 const monserrat = Montserrat({
   subsets: ["latin"],
@@ -17,6 +17,12 @@ export default function Home() {
   const [connected, isConnected] = useState(false);
   const [chosenTokenInput, chooseTokenInput] = useState("Symbol");
   const [chosenTokenOutput, chooseTokenOutput] = useState("Symbol");
+  const [chosenTokenAddressInput, chooseTokenAddressInput] = useState(0);
+  const [chosenTokenAddressOutput, chooseTokenAddressOutput] = useState(0);
+  const [chosenTokenDecimalsInput, chooseTokenDecimalsInput] = useState(0);
+  const [chosenTokenDecimalsOutput, chooseTokenDecimalsOutput] = useState(0);
+  const [amountOutput, changeAmountOutput] = useState(0);
+  const [inputAmount, setInputAmount] = useState(0);
 
   return (
     <div className={monserrat.className}>
@@ -37,6 +43,9 @@ export default function Home() {
             <Input
               chooseTokenInput={chooseTokenInput}
               chosenTokenInput={chosenTokenInput}
+              chooseTokenAddressInput={chooseTokenAddressInput}
+              chooseTokenDecimalsInput={chooseTokenDecimalsInput}
+              setInputAmount={setInputAmount}
             ></Input>
           </div>
           <div className="flex justify-center">
@@ -55,6 +64,15 @@ export default function Home() {
             <Output
               chooseTokenOutput={chooseTokenOutput}
               chosenTokenOutput={chosenTokenOutput}
+              chosenTokenAddressInput={chosenTokenAddressInput}
+              chooseTokenAddressOutput={chooseTokenAddressOutput}
+              chosenTokenAddressOutput={chosenTokenAddressOutput}
+              chosenTokenDecimalsInput={chosenTokenDecimalsInput}
+              chooseTokenDecimalsOutput={chooseTokenDecimalsOutput}
+              chosenTokenDecimalsOutput={chosenTokenDecimalsOutput}
+              changeAmountOutput={changeAmountOutput}
+              inputAmount={inputAmount}
+              amountOutput={amountOutput}
             ></Output>
           </div>
           <Swap>

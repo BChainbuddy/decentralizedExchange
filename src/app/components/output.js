@@ -1,12 +1,68 @@
 "use client"; // This is a client components
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
+import qs from "qs";
+import dotenv from "dotenv";
 
-export default function Output({ chooseTokenOutput, chosenTokenOutput }) {
+dotenv.config();
+
+export default function Output({
+  chooseTokenOutput,
+  chosenTokenOutput,
+  chosenTokenAddressInput,
+  chooseTokenAddressOutput,
+  chosenTokenAddressOutput,
+  chosenTokenDecimalsInput,
+  chooseTokenDecimalsOutput,
+  chosenTokenDecimalsOutput,
+  amountInput,
+  changeAmountOutput,
+  inputAmount,
+  amountOutput,
+}) {
   const [modal, showModal] = useState(false);
   const [tokens, setTokens] = useState([]);
   const [inputText, setInputText] = useState("");
-  const amount = useRef(null);
+  const [gasCost, setGasCost] = useState(null);
+
+  // FETCH THE PRICE
+  async function getPrice() {
+    console.log(`This is the inputToken address ${chosenTokenAddressInput}`);
+    console.log(`This is the outputToken address ${chosenTokenAddressOutput}`);
+    console.log(`This is the current value of input token ${inputAmount}`);
+    const params = {
+      sellToken: chosenTokenAddressInput, //NEEDS TO BE AN ADDRESS
+      buyToken: chosenTokenAddressOutput, // NEEDS TO BE AN ADDRESS
+      sellAmount: Number(inputAmount * 10 ** chosenTokenDecimalsInput), //NEEDS TO BE * DECIMALS
+    };
+    const response = await fetch(
+      `https://api.0x.org/swap/v1/quote?${qs.stringify(params)}`,
+      {
+        headers: {
+          "0x-api-key": process.env.Api_key,
+        },
+      }
+    );
+    const responseJSON = await response.json();
+    console.log(responseJSON);
+    const newOutputAmount =
+      responseJSON.buyAmount / 10 ** chosenTokenDecimalsOutput;
+    const newGasCost = responseJSON.estimatedGas;
+    console.log(newOutputAmount.toString());
+    console.log(newGasCost.toString());
+    changeAmountOutput(newOutputAmount);
+    setGasCost(newGasCost);
+  }
+
+  useEffect(() => {
+    if (
+      inputAmount !== 0 &&
+      chosenTokenAddressInput !== 0 &&
+      chosenTokenAddressOutput !== 0
+    ) {
+      getPrice();
+    }
+  }, [inputAmount]);
 
   const openModal = () => {
     showModal(true);
@@ -16,8 +72,14 @@ export default function Output({ chooseTokenOutput, chosenTokenOutput }) {
     showModal(false);
   };
 
-  function willChooseToken(a) {
-    chooseTokenOutput(a);
+  function willChooseToken(symbol, address, decimals) {
+    console.log(`This is the chosen token symbol ${symbol}`);
+    console.log(`This is the chosen token address ${address}`);
+    console.log(`This is the chosen token decimals ${decimals}`);
+    chooseTokenOutput(symbol);
+    chooseTokenAddressOutput(address);
+    chooseTokenDecimalsOutput(decimals);
+    closeModal();
   }
 
   const handleClose = (e) => {
@@ -47,6 +109,11 @@ export default function Output({ chooseTokenOutput, chosenTokenOutput }) {
       console.error("An error occurred in tokenListInit:", error);
     }
   }
+  useEffect(() => {
+    if (amountOutput !== 0) {
+      console.log(amountOutput);
+    }
+  }, [amountOutput]);
 
   useEffect(() => {
     tokenListInit();
@@ -56,13 +123,11 @@ export default function Output({ chooseTokenOutput, chosenTokenOutput }) {
     <div>
       <div className="flex flex-row p-1">
         <input
-          ref={amount}
           className="bg-slate-300 rounded-l-md border-2 p-2 text-gray-600"
           type="number"
           id="Amount"
           name="Amount"
-          step="0.1"
-          placeholder="100"
+          placeholder={amountOutput !== 0 ? amountOutput : 100}
           min="0"
           disabled
         ></input>
@@ -102,10 +167,14 @@ export default function Output({ chooseTokenOutput, chosenTokenOutput }) {
                   className="hover:bg-zinc-300 flex justify-center items-center border border-gray-600 py-2 space-x-1"
                   key={`${token.symbol}-${index}`}
                   onClick={() => {
-                    willChooseToken(token.symbol);
+                    willChooseToken(
+                      token.symbol,
+                      token.address,
+                      token.decimals
+                    );
                   }}
                 >
-                  <img className="" src={token.logoURI} alt={token.symbol} />
+                  {/* <img className="" src={token.logoURI} alt={token.symbol} /> */}
                   <span className="">{token.symbol}</span>
                 </button>
               ))}
@@ -113,6 +182,10 @@ export default function Output({ chooseTokenOutput, chosenTokenOutput }) {
           </div>
         </div>
       ) : null}
+      <div className="flex flex-row mt-6">
+        <p>Estimated gas to swap:</p>
+        <span className="ml-1">{gasCost}</span>
+      </div>
     </div>
   );
 }
