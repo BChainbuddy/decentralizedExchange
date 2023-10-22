@@ -76,8 +76,12 @@ export default function Home() {
             ></Output>
           </div>
           <Swap>
-            chosenTokenInput={chosenTokenInput}
-            chosenTokenOutput={chosenTokenOutput}
+            chosenTokenInput={chosenTokenAddressInput}
+            chosenTokenOutput={chosenTokenAddressOutput}
+            chosenTokenDecimalsInput={chosenTokenDecimalsInput}
+            chosenTokenDecimalsOutput={chosenTokenDecimalsOutput}
+            inputAmount={inputAmount}
+            amountOutput={amountOutput}
           </Swap>
         </div>
       </main>

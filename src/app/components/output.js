@@ -36,7 +36,7 @@ export default function Output({
       sellAmount: Number(inputAmount * 10 ** chosenTokenDecimalsInput), //NEEDS TO BE * DECIMALS
     };
     const response = await fetch(
-      `https://api.0x.org/swap/v1/quote?${qs.stringify(params)}`,
+      `https://api.0x.org/swap/v1/price?${qs.stringify(params)}`,
       {
         headers: {
           "0x-api-key": process.env.Api_key,
