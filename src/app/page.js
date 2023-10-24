@@ -75,14 +75,14 @@ export default function Home() {
               amountOutput={amountOutput}
             ></Output>
           </div>
-          <Swap>
-            chosenTokenInput={chosenTokenAddressInput}
-            chosenTokenOutput={chosenTokenAddressOutput}
+          <Swap
+            chosenTokenAddressInput={chosenTokenAddressInput}
+            chosenTokenAddressOutput={chosenTokenAddressOutput}
             chosenTokenDecimalsInput={chosenTokenDecimalsInput}
             chosenTokenDecimalsOutput={chosenTokenDecimalsOutput}
             inputAmount={inputAmount}
-            amountOutput={amountOutput}
-          </Swap>
+            connected={connected}
+          ></Swap>
         </div>
       </main>
     </div>

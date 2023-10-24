@@ -15,7 +15,6 @@ export default function Output({
   chosenTokenDecimalsInput,
   chooseTokenDecimalsOutput,
   chosenTokenDecimalsOutput,
-  amountInput,
   changeAmountOutput,
   inputAmount,
   amountOutput,
@@ -39,19 +38,24 @@ export default function Output({
       `https://api.0x.org/swap/v1/price?${qs.stringify(params)}`,
       {
         headers: {
-          "0x-api-key": process.env.Api_key,
+          "0x-api-key": ,
         },
       }
     );
     const responseJSON = await response.json();
-    console.log(responseJSON);
-    const newOutputAmount =
-      responseJSON.buyAmount / 10 ** chosenTokenDecimalsOutput;
-    const newGasCost = responseJSON.estimatedGas;
-    console.log(newOutputAmount.toString());
-    console.log(newGasCost.toString());
-    changeAmountOutput(newOutputAmount);
-    setGasCost(newGasCost);
+    if (responseJSON.price) {
+      console.log(responseJSON);
+      const newOutputAmount =
+        responseJSON.buyAmount / 10 ** chosenTokenDecimalsOutput;
+      console.log(newOutputAmount.toString());
+      console.log(responseJSON.estimatedGas.toString());
+      changeAmountOutput(newOutputAmount);
+      setGasCost(responseJSON.estimatedGas);
+    } else {
+      console.log(`Error ${responseJSON.code}`);
+      changeAmountOutput(0);
+      setGasCost();
+    }
   }
 
   useEffect(() => {
