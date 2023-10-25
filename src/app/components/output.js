@@ -26,6 +26,7 @@ export default function Output({
 
   // FETCH THE PRICE
   async function getPrice() {
+    console.log(`Getting the best price...`)
     console.log(`This is the inputToken address ${chosenTokenAddressInput}`);
     console.log(`This is the outputToken address ${chosenTokenAddressOutput}`);
     console.log(`This is the current value of input token ${inputAmount}`);
