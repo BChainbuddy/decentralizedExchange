@@ -38,7 +38,7 @@ export default function Output({
       `https://api.0x.org/swap/v1/price?${qs.stringify(params)}`,
       {
         headers: {
-          "0x-api-key": ,
+          "0x-api-key": process.env.NEXT_PUBLIC_APIKEY,
         },
       }
     );

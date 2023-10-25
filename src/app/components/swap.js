@@ -221,7 +221,7 @@ export default function Swap({
       `https://api.0x.org/swap/v1/quote?${qs.stringify(params)}`,
       {
         headers: {
-          "0x-api-key": ,
+          "0x-api-key": process.env.NEXT_PUBLIC_APIKEY,
         },
       }
     );
