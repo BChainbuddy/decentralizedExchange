@@ -31,6 +31,11 @@ export default function Input({
     closeModal();
   }
 
+  function shortenSymbol(longSymbol) {
+    const newSymbol = longSymbol.substring(0, 5).toString() + "..";
+    return newSymbol;
+  }
+
   const handleClose = (e) => {
     if (e.target.id === "wrapper") {
       closeModal();
@@ -80,7 +85,9 @@ export default function Input({
           className="border-2 rounded-r-md px-3 hover:bg-zinc-300"
           onClick={openModal}
         >
-          {chosenTokenInput}
+          {chosenTokenInput.length > 6
+            ? shortenSymbol(chosenTokenInput)
+            : chosenTokenInput}
         </button>
       </div>
       {modal ? (
@@ -105,7 +112,7 @@ export default function Input({
             ></input>
             <div
               id="tokenList"
-              className="bg-amber-50 rounded text-center text-black flex flex-col overflow-y-auto max-h-80"
+              className="bg-amber-50 rounded text-center text-black flex flex-col overflow-y-auto h-80"
             >
               {tokens.map((token, index) => (
                 <button

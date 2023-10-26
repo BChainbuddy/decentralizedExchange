@@ -26,7 +26,7 @@ export default function Output({
 
   // FETCH THE PRICE
   async function getPrice() {
-    console.log(`Getting the best price...`)
+    console.log(`Getting the best price...`);
     console.log(`This is the inputToken address ${chosenTokenAddressInput}`);
     console.log(`This is the outputToken address ${chosenTokenAddressOutput}`);
     console.log(`This is the current value of input token ${inputAmount}`);
@@ -57,6 +57,11 @@ export default function Output({
       changeAmountOutput(0);
       setGasCost();
     }
+  }
+
+  function shortenSymbol(longSymbol) {
+    const newSymbol = longSymbol.substring(0, 5).toString() + "..";
+    return newSymbol;
   }
 
   useEffect(() => {
@@ -140,7 +145,9 @@ export default function Output({
           className="border-2 rounded-r-md px-3 hover:bg-zinc-300"
           onClick={openModal}
         >
-          {chosenTokenOutput}
+          {chosenTokenOutput.length > 6
+            ? shortenSymbol(chosenTokenOutput)
+            : chosenTokenOutput}
         </button>
       </div>
       {modal ? (
@@ -165,7 +172,7 @@ export default function Output({
             ></input>
             <div
               id="tokenList"
-              className="bg-amber-50 rounded text-center text-black flex flex-col overflow-y-auto max-h-80"
+              className="bg-amber-50 rounded text-center text-black flex flex-col overflow-y-auto h-80"
             >
               {tokens.map((token, index) => (
                 <button
