@@ -34,7 +34,7 @@ export default function Home() {
         <Connect isConnected={isConnected}></Connect>
       </header>
       <main className="flex justify-center">
-        <div className="w-1/2 space-y-1 mt-16 py-10 text-gray-400 p-10 text-center flex flex-col rounded-xl shadow-2xl shadow-cyan-400">
+        <div className="w-[450px] space-y-1 mt-16 py-10 text-gray-400 p-10 text-center flex flex-col rounded-xl shadow-2xl shadow-cyan-400">
           <p className="text-2xl mb-4">Exchange Tokens</p>
           <div className="flex flex-col">
             <div>

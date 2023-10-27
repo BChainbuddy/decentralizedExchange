@@ -4,11 +4,6 @@ import { Web3 } from "web3";
 import dotenv from "dotenv";
 import qs from "qs";
 import BigNumber from "bignumber.js";
-import {
-  useAccount,
-  useSendTransaction,
-  usePrepareSendTransaction,
-} from "wagmi";
 
 dotenv.config();
 
