@@ -31,7 +31,12 @@ export default function Home() {
           <p className="text-gray-400 text-4xl font-bold">SEA SWAP</p>
           <div className="absolute inset-x-0 bottom-0 h-0.5 bg-cyan-500 shadow shadow-cyan-500"></div>
         </div>
-        <Connect isConnected={isConnected}></Connect>
+        <div>
+          <button className="text-gray-400 mr-10 border rounded-md p-3 hover:bg-zinc-300">
+            LIQUIDITY POOLS
+          </button>
+          <Connect isConnected={isConnected}></Connect>
+        </div>
       </header>
       <main className="flex justify-center">
         <div className="w-[450px] space-y-1 mt-16 py-10 text-gray-400 p-10 text-center flex flex-col rounded-xl shadow-2xl shadow-cyan-400">
