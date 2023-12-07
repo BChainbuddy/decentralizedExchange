@@ -2,11 +2,12 @@
 
 import Image from "next/image";
 import { Montserrat } from "next/font/google";
-import Input from "./components/input";
-import Output from "./components/output";
-import Swap from "./components/swap";
-import Connect from "./components/connectButton";
+import Input from "../components/input";
+import Output from "../components/output";
+import Swap from "../components/swap";
+import Connect from "../components/connectButton";
 import { useState, useRef, useEffect } from "react";
+import Link from "next/link";
 
 const monserrat = Montserrat({
   subsets: ["latin"],
@@ -32,9 +33,12 @@ export default function Home() {
           <div className="absolute inset-x-0 bottom-0 h-0.5 bg-cyan-500 shadow shadow-cyan-500"></div>
         </div>
         <div>
-          <button className="text-gray-400 mr-10 border rounded-md p-3 hover:bg-zinc-300">
+          <Link
+            href='/pools'
+            className="text-gray-400 mr-10 border rounded-md p-3 hover:bg-zinc-300"
+          >
             LIQUIDITY POOLS
-          </button>
+          </Link>
           <Connect isConnected={isConnected}></Connect>
         </div>
       </header>

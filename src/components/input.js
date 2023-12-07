@@ -1,6 +1,10 @@
-"use client";
-
 import { useState, useEffect } from "react";
+
+async function getTokenList() {
+  const response = await fetch("https://tokens.coingecko.com/uniswap/all.json");
+  const tokenListJSON = await response.json();
+  return tokenListJSON.tokens;
+}
 
 export default function Input({
   chooseTokenInput,
@@ -44,12 +48,7 @@ export default function Input({
 
   async function tokenListInit() {
     try {
-      const response = await fetch(
-        "https://tokens.coingecko.com/uniswap/all.json"
-      );
-      const tokenListJSON = await response.json();
-      const allTokens = tokenListJSON.tokens;
-
+      const allTokens = await getTokenList();
       // Filter tokens based on the input text if it's not empty
       const filteredTokens =
         inputText !== ""
@@ -126,7 +125,6 @@ export default function Input({
                     );
                   }}
                 >
-                  {/* <img className="" src={token.logoURI} alt={token.symbol} /> */}
                   <span className="">{token.symbol}</span>
                 </button>
               ))}
