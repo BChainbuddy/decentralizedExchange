@@ -25,7 +25,7 @@ export default function Connect({ isConnected }) {
 
   return (
     <button
-      className="text-gray-400 mr-10 border rounded-md p-3 hover:bg-zinc-300"
+      className="button text-gray-400 mr-10 border rounded-md p-3 hover:bg-zinc-300"
       onClick={connect}
     >
       {metaMask == 0 ? (

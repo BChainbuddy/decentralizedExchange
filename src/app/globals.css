@@ -1,3 +1,25 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.button {
+  background-image: linear-gradient(
+    to left,
+    transparent,
+    transparent 50%,
+    #06b6d4 50%,
+    #06b6d4
+  );
+  background-position: 100% 0;
+  background-size: 200% 100%;
+  transition: all 0.45s ease-in;
+}
+
+.button:hover {
+  background-position: 0 0;
+  background-color: #06b6d4;
+  color: #fff;
+  -webkit-transition: all 0.5s ease;
+  -o-transition: all 0.5s ease;
+  transition: all 0.5s ease;
+}
