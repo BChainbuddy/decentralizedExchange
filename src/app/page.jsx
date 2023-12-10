@@ -34,10 +34,10 @@ export default function Home() {
         </div>
         <div>
           <Link
-            href='/pools'
+            href='/poolpage'
             className="button text-gray-400 mr-10 border rounded-md p-3 hover:bg-zinc-300"
           >
-            LIQUIDITY POOLS
+            LIQUIDITY POOL
           </Link>
           <Connect isConnected={isConnected}></Connect>
         </div>
