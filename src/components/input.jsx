@@ -81,7 +81,7 @@ export default function Input({
           onChange={(e) => setInputAmount(e.target.value)}
         ></input>
         <button
-          className="border-2 rounded-r-md px-3 hover:bg-zinc-300"
+          className="transition ease-in-out duration-250 border-2 rounded-r-md px-3 hover:bg-zinc-300 hover:text-gray-600"
           onClick={openModal}
         >
           {chosenTokenInput.length > 6
