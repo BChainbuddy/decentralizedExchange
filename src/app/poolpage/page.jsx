@@ -7,6 +7,9 @@ import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import Modal from "../../components/modal"
+import CONTRACT_ADDRESS from "../../constants/LiquidityPoolAddress.json"
+import ABI from "../../constants/LiquidityPoolAbi.json"
+import { useContract, useProvider, useSigner, useAccount } from "wagmi";
 
 const monserrat = Montserrat({
   subsets: ["latin"],
@@ -14,9 +17,42 @@ const monserrat = Montserrat({
 });
 
 export default function poolPage() {
-  const [connected, isConnected] = useState(false);
+  const [connected, setConnected] = useState(false);
   const [displayModal, setDisplayModal] = useState(false)
   const [displayModal2, setDisplayModal2] = useState(false)
+
+  const [yieldDistributed, setYieldDistributed] = useState(0)
+  const [totalLiquidity, setTotalLiquidity] = useState(0)
+  const [lpTokens, setLpTokens] = useState(0)
+  const [userYieldDistributed, setUserYieldDistributed] = useState(0)
+  
+  const provider = useProvider()
+  const { data: signer } = useSigner()
+  const { address } = useAccount()
+
+  const contract = useContract({
+    address: CONTRACT_ADDRESS["11155111"],
+    abi: ABI,
+    signerOrProvider: signer || provider,
+  });
+  console.log(CONTRACT_ADDRESS["11155111"].toString())
+  console.log(signer)
+  console.log(address)
+  const getPoolStats = async () => {
+    const yielded = await contract.yieldAmount()
+    const liquidity = await contract.getLiquidity()
+    // const tokens = await contract.getLpTokenQuantity(signer)
+    // const useryielded = await contract.yieldTaken(signer)
+    console.log(yielded.toString())
+    console.log(liquidity.toString())
+    // console.log(tokens.toString())
+    // console.log(signer.toString())
+    // console.log(useryielded.toString())
+    setYieldDistributed(yielded)
+    setTotalLiquidity(liquidity)
+    // setLpTokens(tokens)
+    // setUserYieldDistributed()
+  }
 
   function numberCounter() {
     let countingY = 0
@@ -54,8 +90,9 @@ export default function poolPage() {
       
       }
   }
-
+  
   useEffect(() => {
+    getPoolStats()
     numberCounter()
   }, [])
 
@@ -66,14 +103,14 @@ export default function poolPage() {
           <p className="text-gray-400 text-4xl font-bold">SEA SWAP</p>
           <div className="absolute inset-x-0 bottom-0 h-0.5 bg-cyan-500 shadow shadow-cyan-500"></div>
         </div>
-        <div>
+        <div className="flex flex-row">
           <Link
             href="/"
             className="button text-gray-400 mr-10 border rounded-md p-3 hover:bg-zinc-300"
           >
             EXCHANGE
           </Link>
-          <Connect isConnected={isConnected}></Connect>
+          <Connect setConnected={setConnected}></Connect>
         </div>
       </header>
       <main className="flex flex-col">

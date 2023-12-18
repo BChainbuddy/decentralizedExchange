@@ -9,13 +9,16 @@ import Connect from "../components/connectButton";
 import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 
+import CONTRACT_ADDRESS from "../constants/LiquidityPoolAddress.json"
+import ABI from "../constants/LiquidityPoolAbi.json"
+
 const monserrat = Montserrat({
   subsets: ["latin"],
   weight: ["400"],
 });
 
 export default function Home() {
-  const [connected, isConnected] = useState(false);
+  const [connected, setConnected] = useState(false);
   const [chosenTokenInput, chooseTokenInput] = useState("Symbol");
   const [chosenTokenOutput, chooseTokenOutput] = useState("Symbol");
   const [chosenTokenAddressInput, chooseTokenAddressInput] = useState(0);
@@ -32,14 +35,14 @@ export default function Home() {
           <p className="text-gray-400 text-4xl font-bold">SEA SWAP</p>
           <div className="absolute inset-x-0 bottom-0 h-0.5 bg-cyan-500 shadow shadow-cyan-500"></div>
         </div>
-        <div>
+        <div className="flex flex-row">
           <Link
             href='/poolpage'
             className="button text-gray-400 mr-10 border rounded-md p-3 hover:bg-zinc-300"
           >
             LIQUIDITY POOL
           </Link>
-          <Connect isConnected={isConnected}></Connect>
+          <Connect setConnected={setConnected}></Connect>
         </div>
       </header>
       <main className="flex justify-center">

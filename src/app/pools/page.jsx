@@ -24,7 +24,7 @@ async function getContributions() {
 }
 
 export default function liquidityPools() {
-  const [connected, isConnected] = useState(false);
+  const [connected, setConnected] = useState(false);
 
   return ( <div className={monserrat.className}>
       <header className="justify-between flex flex-row items-center p-6">
