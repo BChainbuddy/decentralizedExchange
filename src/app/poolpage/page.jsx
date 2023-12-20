@@ -10,6 +10,7 @@ import Modal from "../../components/modal"
 import CONTRACT_ADDRESS from "../../constants/LiquidityPoolAddress.json"
 import ABI from "../../constants/LiquidityPoolAbi.json"
 import { useContract, useProvider, useSigner, useAccount } from "wagmi";
+import { ethers } from "ethers"
 
 const monserrat = Montserrat({
   subsets: ["latin"],
@@ -25,33 +26,51 @@ export default function poolPage() {
   const [totalLiquidity, setTotalLiquidity] = useState(0)
   const [lpTokens, setLpTokens] = useState(0)
   const [userYieldDistributed, setUserYieldDistributed] = useState(0)
+
+  const [amountOfTokenOne, setAmountOfTokenOne] = useState(0)
+  const [amountOfTokenTwo, setAmountOfTokenTwo] = useState(0)
+
+  const [addressOne, setAddressOne] = useState(0)
+  const [addressTwo, setAddressTwo] = useState(0)
   
   const provider = useProvider()
   const { data: signer } = useSigner()
-  const { address } = useAccount()
+  const { address, isConnected } = useAccount()
 
   const contract = useContract({
-    address: CONTRACT_ADDRESS["11155111"],
+    address: "0xe86Bf06c275C51A6286254175575d0Bea8f87fCb",
     abi: ABI,
     signerOrProvider: signer || provider,
   });
-  console.log(CONTRACT_ADDRESS["11155111"].toString())
-  console.log(signer)
-  console.log(address)
+
   const getPoolStats = async () => {
     const yielded = await contract.yieldAmount()
     const liquidity = await contract.getLiquidity()
-    // const tokens = await contract.getLpTokenQuantity(signer)
-    // const useryielded = await contract.yieldTaken(signer)
-    console.log(yielded.toString())
-    console.log(liquidity.toString())
+    const tokens = await contract.getLpTokenQuantity(address)
+    const useryielded = await contract.yieldTaken(address)
+    const addressOne = await contract.assetOneAddress()
+    const addressTwo = await contract.assetTwoAddress()
+    // console.log(yielded.toString())
+    // console.log(liquidity.toString())
     // console.log(tokens.toString())
-    // console.log(signer.toString())
     // console.log(useryielded.toString())
     setYieldDistributed(yielded)
-    setTotalLiquidity(liquidity)
-    // setLpTokens(tokens)
-    // setUserYieldDistributed()
+    setTotalLiquidity(liquidity/10**36)
+    setLpTokens(tokens)
+    setUserYieldDistributed(useryielded)
+    setAddressOne(addressOne)
+    setAddressTwo(addressTwo)
+  }
+
+  const getAmountOfTokenNeeded = async (a) => {
+    if(a > 1){
+      setAmountOfTokenOne(a)
+      console.log(`This is the amout of output ${ethers.utils.parseEther(a).toString()}`)
+      console.log(`This is address one ${addressOne.toString()}`)
+      // NEED TO ADD APROVE
+      const amountNeeded = await contract.amountOfOppositeTokenNeeded(addressOne.toString() , ethers.utils.parseEther(a).toString())
+      setAmountOfTokenTwo(amountNeeded)
+    }
   }
 
   function numberCounter() {
@@ -59,7 +78,7 @@ export default function poolPage() {
     let countingL = 0
 
     const totalYield = 50000
-    const liquidities = 23430
+    const liquidities = totalLiquidity
 
     let counter = setInterval(count, 1)
 
@@ -74,8 +93,8 @@ export default function poolPage() {
           matches[0].innerHTML = countingY
         }
   
-        if(countingL + 100 <= liquidities) {
-          countingL += 100
+        if(countingL + 1000 <= liquidities) {
+          countingL += 1000
           matches[1].innerHTML = countingL
         } else {
           countingL = liquidities
@@ -87,14 +106,25 @@ export default function poolPage() {
           console.log("The interval is closed")
         }
       }
-      
-      }
+    }
   }
-  
+
   useEffect(() => {
-    getPoolStats()
-    numberCounter()
+    setConnected(false)
   }, [])
+
+  useEffect(() => {
+    if(isConnected){
+      getPoolStats()
+    }
+  }, [isConnected])
+
+  useEffect(() => {
+    if(totalLiquidity > 0){
+      numberCounter()
+      console.log(totalLiquidity.toString())
+    }
+  }, [totalLiquidity])
 
   return ( 
     <div className={monserrat.className}>
@@ -171,17 +201,17 @@ export default function poolPage() {
         <div className="mx-auto mt-10">
           <p className="text-white text-lg">Input base token</p>
           <div className="flex flex-row space-x-2">
-            <input></input>
-            <p className="text-white text-xl w-12 text-center">BTC</p>
+            <input onChange={(e) => {getAmountOfTokenNeeded(e.target.value)}} placeholder="0.00" type="number" min="0" step="0.1"/>
+            <p className="text-white text-xl w-12 text-center">BTC</p> 
           </div>
         </div>
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="#FFFFFF" className="w-6 h-6 mx-auto mt-3">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M3 7.5L7.5 3m0 0L12 7.5M7.5 3v13.5m13.5 0L16.5 21m0 0L12 16.5m4.5 4.5V7.5" />
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="#FFFFFF" className="w-6 h-6 mx-auto mt-3">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M3 7.5L7.5 3m0 0L12 7.5M7.5 3v13.5m13.5 0L16.5 21m0 0L12 16.5m4.5 4.5V7.5" />
         </svg>
         <div className="mx-auto mt-3">
           <p className="text-white text-lg">Input base token</p>
           <div className="flex flex-row space-x-2">
-            <input disabled></input>
+            <input placeholder={amountOfTokenTwo !== 0 ? amountOfTokenTwo : 0.00} min="0" disabled></input>
             <p className="text-white text-xl w-12 text-center">USDT</p>
           </div>
         </div>
@@ -209,3 +239,11 @@ export default function poolPage() {
   );
 }
 
+
+
+/* 
+Add liquidity, first input on change triggers function function amountOfOppositeTokenNeeded(address _asset,  uint256 _amount)
+second input will show the output of this function function amountOfOppositeTokenNeeded(address _asset,  uint256 _amount)
+we can get token contracts like this     address assetOneAddress address assetTwoAddress;
+first one needs to be assetOneAddress, then they can change with arrows
+*/
