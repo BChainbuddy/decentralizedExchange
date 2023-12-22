@@ -9,6 +9,7 @@ import { redirect } from "next/navigation";
 import Modal from "../../components/modal"
 import CONTRACT_ADDRESS from "../../constants/LiquidityPoolAddress.json"
 import ABI from "../../constants/LiquidityPoolAbi.json"
+import ERC20ABI from "../../constants/ERC20abi.json"
 import { useContract, useProvider, useSigner, useAccount } from "wagmi";
 import { ethers } from "ethers"
 
@@ -24,7 +25,7 @@ export default function poolPage() {
 
   const [yieldDistributed, setYieldDistributed] = useState(0)
   const [totalLiquidity, setTotalLiquidity] = useState(0)
-  const [lpTokens, setLpTokens] = useState(0)
+  const [userLpTokens, setUserLpTokens] = useState(0)
   const [userYieldDistributed, setUserYieldDistributed] = useState(0)
 
   const [amountOfTokenOne, setAmountOfTokenOne] = useState(0)
@@ -32,52 +33,88 @@ export default function poolPage() {
 
   const [addressOne, setAddressOne] = useState(0)
   const [addressTwo, setAddressTwo] = useState(0)
+
+  const [timeLeft, setTimeLeft] = useState(0)
   
   const provider = useProvider()
   const { data: signer } = useSigner()
   const { address, isConnected } = useAccount()
 
+  const liquidityPoolAddres = CONTRACT_ADDRESS["11155111"][0]
+
+  // Retrieving the contract objects with wagmi
   const contract = useContract({
-    address: "0xe86Bf06c275C51A6286254175575d0Bea8f87fCb",
+    address: liquidityPoolAddres.toString(),
     abi: ABI,
     signerOrProvider: signer || provider,
   });
 
+  const contractERC20first = useContract({
+    address: addressOne.toString(),
+    abi: ERC20ABI,
+    signerOrProvider: signer || provider
+  })
+
+
+  const contractERC20second = useContract({
+    address: addressTwo.toString(),
+    abi: ERC20ABI,
+    signerOrProvider: signer || provider
+  })
+
   const getPoolStats = async () => {
+    // Getting the contract storage variables
     const yielded = await contract.yieldAmount()
     const liquidity = await contract.getLiquidity()
     const tokens = await contract.getLpTokenQuantity(address)
     const useryielded = await contract.yieldTaken(address)
     const addressOne = await contract.assetOneAddress()
     const addressTwo = await contract.assetTwoAddress()
+
+    console.log(liquidityPoolAddres)
+    
+    // Updating the state variables
+    setYieldDistributed(yielded)
+    setTotalLiquidity(Math.floor(liquidity/10**36))
+    setUserLpTokens(tokens/10**36)
+    setUserYieldDistributed(useryielded)
+    setAddressOne(addressOne)
+    setAddressTwo(addressTwo)
+
+    // Logging the contract storage variables to check if correct
     // console.log(yielded.toString())
     // console.log(liquidity.toString())
     // console.log(tokens.toString())
     // console.log(useryielded.toString())
-    setYieldDistributed(yielded)
-    setTotalLiquidity(liquidity/10**36)
-    setLpTokens(tokens)
-    setUserYieldDistributed(useryielded)
-    setAddressOne(addressOne)
-    setAddressTwo(addressTwo)
   }
 
   const getAmountOfTokenNeeded = async (a) => {
-    if(a > 1){
+    if(a > 0){
       setAmountOfTokenOne(a)
-      console.log(`This is the amout of output ${ethers.utils.parseEther(a).toString()}`)
-      console.log(`This is address one ${addressOne.toString()}`)
-      // NEED TO ADD APROVE
-      const amountNeeded = await contract.amountOfOppositeTokenNeeded(addressOne.toString() , ethers.utils.parseEther(a).toString())
-      setAmountOfTokenTwo(amountNeeded)
+      console.log(`This is the amout of input ${ethers.utils.parseEther(a).toString()}`)
+      const amountNeeded = await contract.amountOfOppositeTokenNeeded(addressOne.toString(), ethers.utils.parseEther(a))
+      console.log(`This is the amout of input ${amountNeeded.toString()}`)
+      setAmountOfTokenTwo(ethers.utils.formatEther(amountNeeded))
     }
+  }
+
+  const addLiquidity = async () => {
+    console.log(`Amount of token one ${(amountOfTokenOne*1.1).toString()}`)
+    console.log(`Amount of token two ${(amountOfTokenTwo*1.1).toString()}`)
+    await contractERC20first.approve(liquidityPoolAddres, ethers.utils.parseEther((amountOfTokenOne*1.1).toString()))
+    await contractERC20second.approve(liquidityPoolAddres, ethers.utils.parseEther((amountOfTokenTwo*1.1).toString()))
+    await contract.addLiquidity(addressOne, addressTwo, ethers.utils.parseEther(amountOfTokenOne))
+  }
+
+  const claimRewards = async () => {
+    await contract.getYield()
   }
 
   function numberCounter() {
     let countingY = 0
     let countingL = 0
 
-    const totalYield = 50000
+    const totalYield = yieldDistributed
     const liquidities = totalLiquidity
 
     let counter = setInterval(count, 1)
@@ -109,9 +146,9 @@ export default function poolPage() {
     }
   }
 
-  useEffect(() => {
-    setConnected(false)
-  }, [])
+  // useEffect(() => {
+  //   setConnected(false)
+  // }, [])
 
   useEffect(() => {
     if(isConnected){
@@ -122,9 +159,22 @@ export default function poolPage() {
   useEffect(() => {
     if(totalLiquidity > 0){
       numberCounter()
-      console.log(totalLiquidity.toString())
     }
   }, [totalLiquidity])
+
+  // const getTimeLeft = () => {
+  //   const response = await contract.isTime()
+  //   if(response){
+  //     const timestamp = await contract.lastYieldFarmedTime(address)
+  //     console.log(timestamp)
+  //   }
+
+  // }
+  // useEffect(() => {
+  //   if(displayModal2) {
+  //     await contract.
+  //   }
+  // }, displayModal2)
 
   return ( 
     <div className={monserrat.className}>
@@ -173,7 +223,7 @@ export default function poolPage() {
           <div className="flex flex-row items-center w-full">
             <div className="w-1/2 text-center">
               <p className="text-lg">LIQUIDITY PROVIDED</p>
-              <p className="text-base">0</p>
+              <p className="text-base">{Math.floor(userLpTokens).toString()}</p>
             </div>
             <div className="flex justify-center w-1/2">
               <button onClick={() => {
@@ -196,12 +246,14 @@ export default function poolPage() {
       </main>
       <Modal isVisible={displayModal} onClose={() => {
         setDisplayModal(false)
+        setAmountOfTokenOne(0)
+        setAmountOfTokenTwo(0)
       }}>
         <p className="text-center text-white text-2xl">INVEST INTO <span className="text-cyan-300">BTC/USDT</span> LIQUIDITY POOL</p>
         <div className="mx-auto mt-10">
           <p className="text-white text-lg">Input base token</p>
           <div className="flex flex-row space-x-2">
-            <input onChange={(e) => {getAmountOfTokenNeeded(e.target.value)}} placeholder="0.00" type="number" min="0" step="0.1"/>
+            <input onChange={(e) => {getAmountOfTokenNeeded(e.target.value)}} placeholder="0.00" type="number" min="0" step="0.1" className="pl-1 rounded"/>
             <p className="text-white text-xl w-12 text-center">BTC</p> 
           </div>
         </div>
@@ -211,10 +263,16 @@ export default function poolPage() {
         <div className="mx-auto mt-3">
           <p className="text-white text-lg">Input base token</p>
           <div className="flex flex-row space-x-2">
-            <input placeholder={amountOfTokenTwo !== 0 ? amountOfTokenTwo : 0.00} min="0" disabled></input>
+            <input placeholder={amountOfTokenTwo !== 0 ? amountOfTokenTwo : "0.00"} min="0" disabled className="pl-1 rounded"></input>
             <p className="text-white text-xl w-12 text-center">USDT</p>
           </div>
         </div>
+        <button className="mt-6 mx-auto transition ease-in-out duration-500 border bg-cyan-500 rounded-xl p-2 text-white hover:scale-110 hover:bg-cyan-700"
+        onClick={() => {
+          addLiquidity()
+        }}>
+          ADD LIQUIDITY
+        </button>
         <p className="text-center mt-7 text-white text-lg">
           Invest to start earning <span className="text-cyan-300">rewards</span> from the pool TODAY!
         </p>
@@ -223,16 +281,15 @@ export default function poolPage() {
         setDisplayModal2(false)
       }}>
         <p className="text-center text-white text-2xl">CLAIM THE <span className="text-cyan-300">REWARDS</span></p>
-        <div className="mx-auto text-white mt-10">
-          <p className="text-center text-xl">Unrealized rewards:</p>
-          <p className="text-center text-lg mt-0.5">124312412</p>
-        </div>
-        <button className="mt-12 mx-auto transition ease-in-out duration-500 border bg-cyan-500 rounded-xl p-2 text-white hover:scale-110 hover:bg-cyan-700">
+        <button className="mt-12 mx-auto transition ease-in-out duration-500 border bg-cyan-500 rounded-xl p-2 text-white hover:scale-110 hover:bg-cyan-700"
+          onClick={() => {
+            claimRewards()
+          }}
+        >
           CLAIM REWARDS
         </button>
-        <div className="mx-auto text-white mt-12">
-          <p className="text-center text-xl">Realized rewards:</p>
-          <p className="text-center text-lg mt-0.5">12412135</p>
+        <div className="mx-auto mt-6">
+          <p><span>The rewards are available to claim</span><span>You have to wait for <span></span> !</span></p>
         </div>
       </Modal>
     </div> 

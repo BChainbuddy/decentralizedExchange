@@ -58,7 +58,11 @@ export default function Connect({ setConnected }) {
         {connectors.map((connector) => (
           <button
             key={connector.id}
-            onClick={() => connect({ connector })}
+            onClick={() => {
+              connect({ connector })
+              changeMetamask(1)
+              }
+            }
             className="button text-gray-400 mr-10 border rounded-md p-3 hover:bg-zinc-300"
           >
             CONNECT WALLET
