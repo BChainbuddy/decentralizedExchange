@@ -22,19 +22,25 @@ export default function poolPage() {
   const [connected, setConnected] = useState(false);
   const [displayModal, setDisplayModal] = useState(false)
   const [displayModal2, setDisplayModal2] = useState(false)
+  const [displayModal3, setDisplayModal3] = useState(false)
 
   const [yieldDistributed, setYieldDistributed] = useState(0)
   const [totalLiquidity, setTotalLiquidity] = useState(0)
   const [userLpTokens, setUserLpTokens] = useState(0)
   const [userYieldDistributed, setUserYieldDistributed] = useState(0)
+  const [price, setPrice] = useState(0)
 
   const [amountOfTokenOne, setAmountOfTokenOne] = useState(0)
   const [amountOfTokenTwo, setAmountOfTokenTwo] = useState(0)
 
   const [addressOne, setAddressOne] = useState(0)
   const [addressTwo, setAddressTwo] = useState(0)
+  const [symbolOne, setSymbolOne] = useState("Token1")
+  const [symbolTwo, setSymbolTwo] = useState("Token2")
 
   const [timeLeft, setTimeLeft] = useState(0)
+
+  const [removeLiquidity, setRemoveLiquidity] = useState(0)
   
   const provider = useProvider()
   const { data: signer } = useSigner()
@@ -70,23 +76,40 @@ export default function poolPage() {
     const useryielded = await contract.yieldTaken(address)
     const addressOne = await contract.assetOneAddress()
     const addressTwo = await contract.assetTwoAddress()
+    const price = await contract.assetOnePrice()
 
     console.log(liquidityPoolAddres)
+    console.log(price.toString())
     
     // Updating the state variables
-    setYieldDistributed(yielded)
+    setYieldDistributed(yielded/10**18)
     setTotalLiquidity(Math.floor(liquidity/10**36))
     setUserLpTokens(tokens/10**36)
-    setUserYieldDistributed(useryielded)
+    setUserYieldDistributed(useryielded/10**18)
     setAddressOne(addressOne)
     setAddressTwo(addressTwo)
-
+    setPrice((price/10**18).toFixed(2))
     // Logging the contract storage variables to check if correct
     // console.log(yielded.toString())
     // console.log(liquidity.toString())
     // console.log(tokens.toString())
     // console.log(useryielded.toString())
   }
+
+  const getSymbols = async () => {
+    const getSymbolOne = await contractERC20first.symbol()
+    const getSymbolTwo = await contractERC20second.symbol()
+
+    setSymbolOne(getSymbolOne.toString())
+    setSymbolTwo(getSymbolTwo.toString())
+  }
+
+  useEffect(() => {
+    if(addressTwo !== 0){
+      getSymbols()
+    }
+
+  }, [addressTwo])
 
   const getAmountOfTokenNeeded = async (a) => {
     if(a > 0){
@@ -104,6 +127,14 @@ export default function poolPage() {
     await contractERC20first.approve(liquidityPoolAddres, ethers.utils.parseEther((amountOfTokenOne*1.1).toString()))
     await contractERC20second.approve(liquidityPoolAddres, ethers.utils.parseEther((amountOfTokenTwo*1.1).toString()))
     await contract.addLiquidity(addressOne, addressTwo, ethers.utils.parseEther(amountOfTokenOne))
+  }
+
+  const removePartLiquidty = async () => {
+    if(removeLiquidity > 0 && removeLiquidity <= 100) {
+      console.log(`Removing ${Math.round(removeLiquidity)} liqudity...`)
+      await contract.removeLiquidity(Math.round(removeLiquidity))
+      console.log(`Liquidty removed!`)
+    }
   }
 
   const claimRewards = async () => {
@@ -146,10 +177,6 @@ export default function poolPage() {
     }
   }
 
-  // useEffect(() => {
-  //   setConnected(false)
-  // }, [])
-
   useEffect(() => {
     if(isConnected){
       getPoolStats()
@@ -162,19 +189,33 @@ export default function poolPage() {
     }
   }, [totalLiquidity])
 
-  // const getTimeLeft = () => {
-  //   const response = await contract.isTime()
-  //   if(response){
-  //     const timestamp = await contract.lastYieldFarmedTime(address)
-  //     console.log(timestamp)
-  //   }
+  const getTimeLeft = async () => {
+    console.log('Get time left...')
+    const response = await contract.isTime()
+    console.log(response.toString())
+    if(!response){
+      console.log("TimeLock is on")
+      const timestamp = await contract.lastYieldFarmedTime(address)
+      const currentTimeStamp = Math.round(Date.now() / 1000)
+      const timeLeft = parseInt(timestamp) + 24*60*60 - currentTimeStamp
+      console.log(timeLeft)
+      setTimeLeft(timeLeft)
+      const hoursLeft = Math.floor(timeLeft/60/60)
+      console.log(hoursLeft)
+      const minutesLeft = (Math.floor(timeLeft/60)) % 24
+      console.log(minutesLeft)
+      if(document.getElementById("time") !== null){
+        document.getElementById("time").innerHTML = `${hoursLeft} H ${minutesLeft} min`
+      }
+    }
+    console.log("TimeLock is not on")
 
-  // }
-  // useEffect(() => {
-  //   if(displayModal2) {
-  //     await contract.
-  //   }
-  // }, displayModal2)
+  }
+  useEffect(() => {
+    if(displayModal2) {
+      getTimeLeft()
+    }
+  }, [displayModal2])
 
   return ( 
     <div className={monserrat.className}>
@@ -195,7 +236,7 @@ export default function poolPage() {
       </header>
       <main className="flex flex-col">
         <section className="flex flex-row text-gray-400 px-28 mt-16">
-            <div  className="flex flex-col text-center mt-16 space-y-1 w-1/3 ml-8">
+            <div  className="flex flex-col text-center mt-16 space-y-1 w-1/3 p-1">
               <div className="flex flex-row items-center justify-center space-x-1">
                 <p className="text-xl">YIELD DISTRIBUTED</p>
                   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-7 h-7 mb-1">
@@ -206,10 +247,10 @@ export default function poolPage() {
             </div>
             <div className="flex flex-col text-center w-1/3">
               <p className="text-sm">LIQUIDITY POOL</p>
-              <p className="text-3xl text-cyan-500">USDT/BTC</p>
-              <p className="text-lg mt-2">Price: 21234</p>
+              <p className="text-3xl text-cyan-500">{symbolOne}/{symbolTwo}</p>
+              <p className="text-lg mt-2">{price}</p>
             </div>
-            <div className="flex flex-col text-center mt-16 space-y-1 w-1/3 mr-8">
+            <div className="flex flex-col text-center mt-16 space-y-1 w-1/3 p-1">
               <div className="flex flex-row items-center justify-center space-x-1">
                 <p className="text-xl">TOTAL LIQUIDITY</p><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-7 h-7 mb-1">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M20.25 6.375c0 2.278-3.694 4.125-8.25 4.125S3.75 8.653 3.75 6.375m16.5 0c0-2.278-3.694-4.125-8.25-4.125S3.75 4.097 3.75 6.375m16.5 0v11.25c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125V6.375m16.5 0v3.75m-16.5-3.75v3.75m16.5 0v3.75C20.25 16.153 16.556 18 12 18s-8.25-1.847-8.25-4.125v-3.75m16.5 0c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125" />
@@ -218,7 +259,7 @@ export default function poolPage() {
               <p className="text-lg number">0</p>
             </div>
         </section>
-        <section className="flex flex-col text-white/75 place-items-center shadow-xl shadow-slate-800/90 mt-24 space-y-16  w-5/12 mx-auto py-8 px-2 rounded-xl bg-gray-700 border-8 border-gray-600">
+        <section className="mx-auto flex flex-col text-white/75 place-items-center shadow-xl shadow-slate-800/90 hover:shadow-2xl mt-24 space-y-16  w-5/12 py-8 px-2 rounded-xl bg-gray-700 border-8 border-gray-600 pb-10">
           <p className="text-center text-2xl text-white">YOUR CONTRIBUTIONS:</p>
           <div className="flex flex-row items-center w-full">
             <div className="w-1/2 text-center">
@@ -226,15 +267,20 @@ export default function poolPage() {
               <p className="text-base">{Math.floor(userLpTokens).toString()}</p>
             </div>
             <div className="flex justify-center w-1/2">
-              <button onClick={() => {
-                setDisplayModal(true)
-              }} className="transition ease-in-out duration-500 border bg-cyan-500 rounded-xl p-2 text-white hover:scale-110 hover:bg-cyan-700">Add liquidity</button>
+              <div className="flex flex-col space-y-3">
+                <button onClick={() => {
+                  setDisplayModal(true)
+                }} className="block transition ease-in-out duration-500 border bg-cyan-500 rounded-xl p-2 text-white hover:scale-110 hover:bg-cyan-700">Add liquidity</button>
+                <button onClick={() => {
+                  setDisplayModal3(true)
+                }} className="block transition ease-in-out duration-500 border bg-cyan-500 rounded-xl p-2 text-white hover:scale-110 hover:bg-cyan-700">Remove liquidity</button>
+              </div>
             </div>
           </div>
           <div className="flex flex-row items-center w-full">
             <div className="w-1/2 text-center">
               <p className="text-lg">YIELD EARNED</p>
-              <p className="text-base">0</p>
+              <p className="text-base">{userYieldDistributed.toString()}</p>
             </div>
             <div className="flex justify-center w-1/2">
               <button onClick={() => {
@@ -249,12 +295,12 @@ export default function poolPage() {
         setAmountOfTokenOne(0)
         setAmountOfTokenTwo(0)
       }}>
-        <p className="text-center text-white text-2xl">INVEST INTO <span className="text-cyan-300">BTC/USDT</span> LIQUIDITY POOL</p>
+        <p className="text-center text-white text-2xl">INVEST INTO <span className="text-cyan-300">{symbolOne}/{symbolTwo}</span> LIQUIDITY POOL</p>
         <div className="mx-auto mt-10">
           <p className="text-white text-lg">Input base token</p>
           <div className="flex flex-row space-x-2">
             <input onChange={(e) => {getAmountOfTokenNeeded(e.target.value)}} placeholder="0.00" type="number" min="0" step="0.1" className="pl-1 rounded"/>
-            <p className="text-white text-xl w-12 text-center">BTC</p> 
+            <p className="text-white text-xl w-12 text-center">{symbolOne}</p> 
           </div>
         </div>
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="#FFFFFF" className="w-6 h-6 mx-auto mt-3">
@@ -264,13 +310,15 @@ export default function poolPage() {
           <p className="text-white text-lg">Input base token</p>
           <div className="flex flex-row space-x-2">
             <input placeholder={amountOfTokenTwo !== 0 ? amountOfTokenTwo : "0.00"} min="0" disabled className="pl-1 rounded"></input>
-            <p className="text-white text-xl w-12 text-center">USDT</p>
+            <p className="text-white text-xl w-12 text-center">{symbolTwo}</p>
           </div>
         </div>
         <button className="mt-6 mx-auto transition ease-in-out duration-500 border bg-cyan-500 rounded-xl p-2 text-white hover:scale-110 hover:bg-cyan-700"
         onClick={() => {
           addLiquidity()
-        }}>
+        }}
+        disabled={amountOfTokenTwo > 0 ? false : true}
+        >
           ADD LIQUIDITY
         </button>
         <p className="text-center mt-7 text-white text-lg">
@@ -281,16 +329,32 @@ export default function poolPage() {
         setDisplayModal2(false)
       }}>
         <p className="text-center text-white text-2xl">CLAIM THE <span className="text-cyan-300">REWARDS</span></p>
-        <button className="mt-12 mx-auto transition ease-in-out duration-500 border bg-cyan-500 rounded-xl p-2 text-white hover:scale-110 hover:bg-cyan-700"
+        <button className="mt-8 mx-auto transition ease-in-out duration-500 border bg-cyan-500 rounded-xl p-2 text-white hover:scale-110 hover:bg-cyan-700"
           onClick={() => {
             claimRewards()
           }}
+          disabled={timeLeft === 0 ? false : true}
         >
           CLAIM REWARDS
         </button>
-        <div className="mx-auto mt-6">
-          <p><span>The rewards are available to claim</span><span>You have to wait for <span></span> !</span></p>
+        <div className="mx-auto mt-8">
+          <p className="text-white"><span className={timeLeft === 0 ? "flex" : "hidden"}>The rewards are available to claim</span><span className={timeLeft === 0 ? "hidden" : "flex"}>You have to wait for <span id="time" className="ml-1 text-cyan-300"> </span> !</span></p>
         </div>
+      </Modal>
+      <Modal isVisible={displayModal3} onClose={() => {
+        setDisplayModal3(false)
+        setRemoveLiquidity(0)
+      }}>
+        <p className="text-center text-white text-2xl"><span className="text-cyan-300">REMOVE</span> THE LIQUIDITY</p>
+        <div className="mt-8 mx-auto">
+          <input onChange={(e) => {setRemoveLiquidity(e.target.value)}} placeholder="0" type="number" min="0" step="1" className="pl-1 rounded"/>
+        </div>
+        <button onClick={() => {removePartLiquidty()}} disabled={removeLiquidity === 0 ? true : false}
+        className="mt-8 mx-auto transition ease-in-out duration-500 border bg-cyan-500 rounded-xl p-2 text-white hover:scale-110 hover:bg-cyan-700"
+        >
+          REMOVE LIQUIDITY
+        </button>
+        <p className="text-white text-center mt-6">Input a <span className="text-cyan-300">percent</span> of liquidity you want to remove</p>
       </Modal>
     </div> 
   );
