@@ -33,7 +33,8 @@ export default function Connect({ setConnected }) {
       changeMetamask(1)
       prettyAddress(address)
     }
-  }, []);
+    console.log(isConnected)
+  }, [isConnected]);
 
   const prettyAddress = (user) => {
     const prettyUser =
