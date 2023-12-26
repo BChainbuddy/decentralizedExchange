@@ -5,7 +5,6 @@ import { Montserrat } from "next/font/google";
 import Connect from "../../components/connectButton";
 import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
-import { redirect } from "next/navigation";
 import Modal from "../../components/modal"
 import CONTRACT_ADDRESS from "../../constants/LiquidityPoolAddress.json"
 import ABI from "../../constants/LiquidityPoolAbi.json"
@@ -20,33 +19,42 @@ const monserrat = Montserrat({
 
 export default function poolPage() {
   const [connected, setConnected] = useState(false);
-  const [displayModal, setDisplayModal] = useState(false)
-  const [displayModal2, setDisplayModal2] = useState(false)
-  const [displayModal3, setDisplayModal3] = useState(false)
 
+  // Liquidity Pool stats
+  const liquidityPoolAddres = CONTRACT_ADDRESS["11155111"][0]
   const [yieldDistributed, setYieldDistributed] = useState(0)
   const [totalLiquidity, setTotalLiquidity] = useState(0)
-  const [userLpTokens, setUserLpTokens] = useState()
-  const [userYieldDistributed, setUserYieldDistributed] = useState(0)
   const [price, setPrice] = useState(0)
-
-  const [amountOfTokenOne, setAmountOfTokenOne] = useState(0)
-  const [amountOfTokenTwo, setAmountOfTokenTwo] = useState(0)
-
-  const [addressOne, setAddressOne] = useState(0)
-  const [addressTwo, setAddressTwo] = useState(0)
   const [symbolOne, setSymbolOne] = useState("Loading...")
   const [symbolTwo, setSymbolTwo] = useState("Loading...")
 
+  // User contribution stats
+  const [userLpTokens, setUserLpTokens] = useState()
+  const [userYieldDistributed, setUserYieldDistributed] = useState(0)
+
+  // Token contracts
+  const [addressOne, setAddressOne] = useState(0)
+  const [addressTwo, setAddressTwo] = useState(0)
+
+  // Add liquidity Modal
+  const [displayModal, setDisplayModal] = useState(false)
+  const [amountOfTokenOne, setAmountOfTokenOne] = useState(0)
+  const [amountOfTokenTwo, setAmountOfTokenTwo] = useState(0)
+  const [symbolOneAddLiquidity, setsymbolOneAddLiquidity] = useState(null) // Symbols which are only on the modal, for switch purposes
+  const [symbolTwoAddLiquidity, setsymbolTwoAddLiquidity] = useState(null)
+
+  // Remove liquidity Modal
+  const [removeLiquidity, setRemoveLiquidity] = useState(0)
+  const [displayModal3, setDisplayModal3] = useState(false)
+    
+  // Get yield Modal
+  const [displayModal2, setDisplayModal2] = useState(false)
   const [timeLeft, setTimeLeft] = useState(0)
 
-  const [removeLiquidity, setRemoveLiquidity] = useState(0)
-  
+  // Wagmi functions
   const provider = useProvider()
   const { data: signer } = useSigner()
   const { address, isConnected } = useAccount()
-
-  const liquidityPoolAddres = CONTRACT_ADDRESS["11155111"][0]
 
   // Retrieving the contract objects with wagmi
   const contract = useContract({
@@ -61,13 +69,13 @@ export default function poolPage() {
     signerOrProvider: signer || provider
   })
 
-
   const contractERC20second = useContract({
     address: addressTwo.toString(),
     abi: ERC20ABI,
     signerOrProvider: signer || provider
   })
 
+  // Getting the liquidity pool stats from the contract
   const getPoolStats = async () => {
     // Getting the contract storage variables
     const yielded = await contract.yieldAmount()
@@ -78,9 +86,6 @@ export default function poolPage() {
     const addressTwo = await contract.assetTwoAddress()
     const price = await contract.assetOnePrice()
 
-    console.log(liquidityPoolAddres)
-    console.log(price.toString())
-    
     // Updating the state variables
     setYieldDistributed(yielded/10**18)
     setTotalLiquidity(Math.floor(liquidity/10**36))
@@ -96,51 +101,90 @@ export default function poolPage() {
     // console.log(useryielded.toString())
   }
 
+  // Switching symbols in the add liquidity modal, called with onClick
+  const switchStats = () => {
+    const x = symbolOneAddLiquidity
+    const y = symbolTwoAddLiquidity
+
+    setAmountOfTokenOne(0)
+    setAmountOfTokenTwo(0)
+    setsymbolOneAddLiquidity(y)
+    setsymbolTwoAddLiquidity(x)
+  }
+
+  // Getting the symbols from token contracts
   const getSymbols = async () => {
     const getSymbolOne = await contractERC20first.symbol()
     const getSymbolTwo = await contractERC20second.symbol()
-
+    // Setting the global symbols
     setSymbolOne(getSymbolOne.toString())
     setSymbolTwo(getSymbolTwo.toString())
+    // Setting the add liquidity modal symbols
+    setsymbolOneAddLiquidity(getSymbolOne.toString())
+    setsymbolTwoAddLiquidity(getSymbolTwo.toString())
   }
 
-  useEffect(() => {
-    if(addressTwo !== 0){
-      getSymbols()
-    }
-
-  }, [addressTwo])
-
+  // Calls a smart contract function to calculate opposite token amount, called in add liquidity modal
   const getAmountOfTokenNeeded = async (a) => {
     if(a > 0){
       setAmountOfTokenOne(a)
       console.log(`This is the amout of input ${ethers.utils.parseEther(a).toString()}`)
-      const amountNeeded = await contract.amountOfOppositeTokenNeeded(addressOne.toString(), ethers.utils.parseEther(a))
+      let address
+      if(symbolOne === symbolOneAddLiquidity){
+        address = addressOne
+      } else {
+        address = addressTwo
+      }
+      const amountNeeded = await contract.amountOfOppositeTokenNeeded(address.toString(), ethers.utils.parseEther(a))
       console.log(`This is the amout of input ${amountNeeded.toString()}`)
       setAmountOfTokenTwo(ethers.utils.formatEther(amountNeeded))
     }
   }
 
+  // Calls a smart contract function to add liquidity to the pool, called in add liqudity modal
   const addLiquidity = async () => {
     console.log(`Amount of token one ${(amountOfTokenOne*1.1).toString()}`)
     console.log(`Amount of token two ${(amountOfTokenTwo*1.1).toString()}`)
-    await contractERC20first.approve(liquidityPoolAddres, ethers.utils.parseEther((amountOfTokenOne*1.1).toString()))
-    await contractERC20second.approve(liquidityPoolAddres, ethers.utils.parseEther((amountOfTokenTwo*1.1).toString()))
-    await contract.addLiquidity(addressOne, addressTwo, ethers.utils.parseEther(amountOfTokenOne))
-  }
-
-  const removePartLiquidty = async () => {
-    if(removeLiquidity > 0 && removeLiquidity <= 100) {
-      console.log(`Removing ${Math.round(removeLiquidity)} liqudity...`)
-      await contract.removeLiquidity(Math.round(removeLiquidity))
-      console.log(`Liquidty removed!`)
+    const approvalTx1 = await contractERC20first.approve(liquidityPoolAddres, ethers.utils.parseEther((amountOfTokenOne*2).toString()))
+    const approvalTx2 = await contractERC20second.approve(liquidityPoolAddres, ethers.utils.parseEther((amountOfTokenTwo*2).toString()))
+    const approvalReceipt1 = await approvalTx1.wait()
+    const approvalReceipt2 = await approvalTx2.wait()
+    console.log(approvalReceipt1)
+    console.log(approvalReceipt2)
+    const tx = await contract.addLiquidity(addressOne, addressTwo, ethers.utils.parseEther(amountOfTokenOne))
+    const txreceipt = await tx.wait(1)
+    console.log(txreceipt)
+    console.log(txreceipt.status)
+    if(txreceipt.status === 1){
+      console.log(`Liquidity added!`)
+      getPoolStats()
     }
   }
 
-  const claimRewards = async () => {
-    await contract.getYield()
+  // Calls a smart contract function to remove liquidty from the pool, called in remove liquidity modal
+  const removePartLiquidity = async () => {
+    if(removeLiquidity > 0 && removeLiquidity <= 100) {
+      console.log(`Removing ${Math.round(removeLiquidity)} liqudity...`)
+      const tx = await contract.removeLiquidity(Math.round(removeLiquidity))
+      const receipt = await tx.wait()
+      if(receipt.status === 1){
+        console.log(`Liquidty removed!`)
+        getPoolStats()
+      }
+    }
   }
 
+  // Calls a smart contract function get yield, called in get yield modal
+  const claimRewards = async () => {
+    const tx = await contract.getYield()
+    const receipt = await tx.wait()
+    if(receipt.status === 1){
+      console.log(`Yield claimed!`)
+      getPoolStats()
+    }
+  }
+
+  // Function for number counting animation, counts the pool liquidity and yield
   function numberCounter() {
     let countingY = 0
     let countingL = 0
@@ -166,10 +210,10 @@ export default function poolPage() {
   
         if(countingL + div2 <= liquidities) {
           countingL += div2
-          matches[1].innerHTML = countingL
+          matches[1].innerHTML = Math.floor(countingL)
         } else {
           countingL = liquidities
-          matches[1].innerHTML = countingL
+          matches[1].innerHTML = Math.floor(countingL)
         }
   
         if (totalYield === countingY && liquidities === countingL) {
@@ -180,6 +224,7 @@ export default function poolPage() {
     }
   }
 
+  // Resets all the stats, only if we disconnect from the app
   const resetStats = () => {
     setYieldDistributed(0)
     setTotalLiquidity(0)
@@ -200,6 +245,7 @@ export default function poolPage() {
       matches[1].innerHTML = "0"
   }
 
+  // Executes functions when isConnected changes
   useEffect(() => {
     if(isConnected){
       getPoolStats()
@@ -208,12 +254,21 @@ export default function poolPage() {
     }
   }, [isConnected])
 
+  // Getting symbols only when we get contracts addresses(we need to have them to execute getSymbols function)
+  useEffect(() => {
+    if(addressTwo !== 0){
+      getSymbols()
+    }
+  }, [addressTwo])
+  
+  // Executes number counter only when the symbolTwo is received by the contract
   useEffect(() => {
     if(symbolTwo !== "Loading..."){
       numberCounter()
     }
   }, [symbolTwo])
 
+  // Calculates the time that is left to claim rewards
   const getTimeLeft = async () => {
     console.log('Get time left...')
     const response = await contract.isTime()
@@ -234,8 +289,9 @@ export default function poolPage() {
       }
     }
     console.log("TimeLock is not on")
-
   }
+
+  // Time left updates only when modal2 is called
   useEffect(() => {
     if(displayModal2) {
       getTimeLeft()
@@ -333,26 +389,28 @@ export default function poolPage() {
         setDisplayModal(false)
         setAmountOfTokenOne(0)
         setAmountOfTokenTwo(0)
+        setsymbolOneAddLiquidity(symbolOne)
+        setsymbolTwoAddLiquidity(symbolTwo)
       }}>
         <p className="text-center text-white text-2xl">INVEST INTO <span className="text-cyan-300">{symbolOne}/{symbolTwo}</span> LIQUIDITY POOL</p>
         <div className="mx-auto mt-10">
           <p className="text-white text-lg">Input base token</p>
           <div className="flex flex-row space-x-2">
             <input onChange={(e) => {getAmountOfTokenNeeded(e.target.value)}} placeholder="0.00" type="number" min="0" step="0.1" className="pl-1 rounded"/>
-            <p className="text-white text-xl w-12 text-center">{symbolOne}</p> 
+            <p className="text-white text-xl w-12 text-center">{symbolOneAddLiquidity}</p> 
           </div>
         </div>
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="#FFFFFF" className="w-6 h-6 mx-auto mt-3">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="#FFFFFF" className="w-6 h-6 mx-auto mt-3 cursor-pointer" onClick={() => {switchStats()}}>
           <path strokeLinecap="round" strokeLinejoin="round" d="M3 7.5L7.5 3m0 0L12 7.5M7.5 3v13.5m13.5 0L16.5 21m0 0L12 16.5m4.5 4.5V7.5" />
         </svg>
         <div className="mx-auto mt-3">
           <p className="text-white text-lg">Input base token</p>
           <div className="flex flex-row space-x-2">
             <input placeholder={amountOfTokenTwo !== 0 ? amountOfTokenTwo : "0.00"} min="0" disabled className="pl-1 rounded"></input>
-            <p className="text-white text-xl w-12 text-center">{symbolTwo}</p>
+            <p className="text-white text-xl w-12 text-center">{symbolTwoAddLiquidity}</p>
           </div>
         </div>
-        <button className="mt-6 mx-auto transition ease-in-out duration-500 border bg-cyan-500 rounded-xl p-2 text-white hover:scale-110 hover:bg-cyan-700"
+        <button className={`${amountOfTokenTwo > 0 ? "transition ease-in-out duration-500 hover:scale-110 hover:bg-cyan-700 bg-cyan-500" : "bg-cyan-500/20"} mt-6 mx-auto border  rounded-xl p-2 text-white`}
         onClick={() => {
           addLiquidity()
         }}
@@ -368,7 +426,7 @@ export default function poolPage() {
         setDisplayModal2(false)
       }}>
         <p className="text-center text-white text-2xl">CLAIM THE <span className="text-cyan-300">REWARDS</span></p>
-        <button className="mt-8 mx-auto transition ease-in-out duration-500 border bg-cyan-500 rounded-xl p-2 text-white hover:scale-110 hover:bg-cyan-700"
+        <button className={`${timeLeft === 0 ? "transition ease-in-out duration-500 hover:scale-110 hover:bg-cyan-700 bg-cyan-500" : "bg-cyan-500/20"} mt-6 mx-auto border  rounded-xl p-2 text-white`}
           onClick={() => {
             claimRewards()
           }}
@@ -377,7 +435,7 @@ export default function poolPage() {
           CLAIM REWARDS
         </button>
         <div className="mx-auto mt-8">
-          <p className="text-white"><span className={timeLeft === 0 ? "flex" : "hidden"}>The rewards are available to claim</span><span className={timeLeft === 0 ? "hidden" : "flex"}>You have to wait for <span id="time" className="ml-1 text-cyan-300"> </span> !</span></p>
+          <p className="text-white"><span className={timeLeft === 0 ? "flex" : "hidden"}>The rewards are <span className="text-cyan-300">available</span> to claim</span><span className={timeLeft === 0 ? "hidden" : "flex"}>You have to wait for <span id="time" className="ml-1 text-cyan-300"> </span> !</span></p>
         </div>
       </Modal>
       <Modal isVisible={displayModal3} onClose={() => {
@@ -388,8 +446,8 @@ export default function poolPage() {
         <div className="mt-8 mx-auto">
           <input onChange={(e) => {setRemoveLiquidity(e.target.value)}} placeholder="0" type="number" min="0" step="1" className="pl-1 rounded"/>
         </div>
-        <button onClick={() => {removePartLiquidty()}} disabled={removeLiquidity === 0 ? true : false}
-        className="mt-8 mx-auto transition ease-in-out duration-500 border bg-cyan-500 rounded-xl p-2 text-white hover:scale-110 hover:bg-cyan-700"
+        <button onClick={() => {removePartLiquidity()}} disabled={removeLiquidity === 0 || removeLiquidity > 100 ? true : false}
+          className={`${removeLiquidity <= 100 && removeLiquidity > 0 ? "transition ease-in-out duration-500 hover:scale-110 hover:bg-cyan-700 bg-cyan-500" : "bg-cyan-500/20"} mt-6 mx-auto border  rounded-xl p-2 text-white`}
         >
           REMOVE LIQUIDITY
         </button>
@@ -398,12 +456,3 @@ export default function poolPage() {
     </div> 
   );
 }
-
-
-
-/* 
-Add liquidity, first input on change triggers function function amountOfOppositeTokenNeeded(address _asset,  uint256 _amount)
-second input will show the output of this function function amountOfOppositeTokenNeeded(address _asset,  uint256 _amount)
-we can get token contracts like this     address assetOneAddress address assetTwoAddress;
-first one needs to be assetOneAddress, then they can change with arrows
-*/

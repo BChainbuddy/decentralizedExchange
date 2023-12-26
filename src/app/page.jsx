@@ -6,11 +6,8 @@ import Input from "../components/input";
 import Output from "../components/output";
 import Swap from "../components/swap";
 import Connect from "../components/connectButton";
-import { useState, useRef, useEffect } from "react";
+import { useState} from "react";
 import Link from "next/link";
-
-import CONTRACT_ADDRESS from "../constants/LiquidityPoolAddress.json"
-import ABI from "../constants/LiquidityPoolAbi.json"
 
 const monserrat = Montserrat({
   subsets: ["latin"],
