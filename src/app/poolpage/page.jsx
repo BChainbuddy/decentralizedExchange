@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { Montserrat } from "next/font/google";
 import Connect from "../../components/connectButton";
-import { useState, useRef, useEffect } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import Modal from "../../components/modal"
 import CONTRACT_ADDRESS from "../../constants/LiquidityPoolAddress.json"

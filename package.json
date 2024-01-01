@@ -23,6 +23,7 @@
   "devDependencies": {
     "autoprefixer": "^10",
     "postcss": "^8",
+    "prettierrc": "^0.0.0-5",
     "tailwindcss": "^3"
   }
 }
