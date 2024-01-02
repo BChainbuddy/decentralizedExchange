@@ -11,7 +11,8 @@ export default function InputTestnet({
     chosenTokenAddressInputTest,
     chooseTokenAddressInputTest,
     chooseTokenDecimalsInputTest,
-    setInputAmountTest
+    setInputAmountTest,
+    isMainnet
 }) {
     const [modal, showModal] = useState(false)
     const [tokens, setTokens] = useState([])
@@ -52,6 +53,7 @@ export default function InputTestnet({
     const handleClose = e => {
         if (e.target.id === "wrapper") {
             closeModal()
+            setInputText("")
         }
     }
 
@@ -96,7 +98,7 @@ export default function InputTestnet({
             const decimalsOne = await contractERC20first.decimals()
             const symbolTwo = await contractERC20second.symbol()
             const decimalsTwo = await contractERC20second.decimals()
-            setTokens([
+            const allTokens = [
                 {
                     address: addressOne,
                     symbol: symbolOne.toString(),
@@ -107,10 +109,24 @@ export default function InputTestnet({
                     symbol: symbolTwo.toString(),
                     decimals: decimalsTwo.toString()
                 }
-            ])
+            ]
+            setTokens(allTokens)
+            setFilteredTokens(allTokens)
         } catch (error) {
             console.error("An error occurred in tokenListInit:", error)
         }
+    }
+
+    const [filteredTokens, setFilteredTokens] = useState([])
+
+    function filterTokenList() {
+        const filterTokens =
+            inputText !== ""
+                ? tokens.filter(token =>
+                      token.symbol.toLowerCase().includes(inputText.toLowerCase())
+                  )
+                : tokens
+        setFilteredTokens(filterTokens)
     }
 
     useEffect(() => {
@@ -118,6 +134,14 @@ export default function InputTestnet({
             tokenListInit()
         }
     }, [addressTwo])
+
+    useEffect(() => {
+        if (inputText !== "") {
+            filterTokenList()
+        } else {
+            filterTokenList(tokens)
+        }
+    }, [inputText])
 
     return (
         <div>
@@ -162,7 +186,7 @@ export default function InputTestnet({
                             id="tokenList"
                             className="bg-amber-50 rounded text-center text-black flex flex-col overflow-y-auto h-80"
                         >
-                            {tokens.map((token, index) => (
+                            {filteredTokens.map((token, index) => (
                                 <button
                                     className="hover-bg-zinc-300 flex justify-center items-center border border-gray-600 py-2 space-x-1"
                                     key={`${token.symbol}-${index}`}

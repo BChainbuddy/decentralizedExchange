@@ -46,20 +46,59 @@ export default function Home() {
             <header className="justify-between flex flex-row items-center p-6">
                 <div className="relative">
                     <p className="text-gray-400 text-4xl font-bold">SEA SWAP</p>
-                    <div className="absolute inset-x-0 bottom-0 h-0.5 bg-cyan-500 shadow shadow-cyan-500"></div>
+                    <div
+                        className={`${
+                            isMainnet
+                                ? "bg-cyan-500 shadow-cyan-500"
+                                : "shadow-yelloy-500 bg-yellow-500"
+                        } absolute inset-x-0 bottom-0 h-0.5  shadow transition duration-200`}
+                    ></div>
                 </div>
                 <div className="flex flex-row">
+                    <div className="mr-20 flex flex-row border space-x-4 rounded-2xl m-1 px-2 items-center bg-gray-600">
+                        <button
+                            className={`${
+                                isMainnet ? "bg-cyan-500" : "bg-cyan-500/10 hover:bg-cyan-500"
+                            } text-sm text-white border-2 p-1 rounded-xl transition duration-200`}
+                            onClick={() => {
+                                setIsMainnet(true)
+                            }}
+                        >
+                            MAIN
+                        </button>
+                        <button
+                            className={`${
+                                isMainnet
+                                    ? "bg-yellow-500/10 hover:bg-yellow-500"
+                                    : "bg-yellow-500"
+                            } text-sm text-white border-2 p-1 rounded-xl transition duration-200`}
+                            onClick={() => {
+                                setIsMainnet(false)
+                            }}
+                        >
+                            POOL
+                        </button>
+                    </div>
                     <Link
                         href="/poolpage"
-                        className="button text-gray-400 mr-10 border rounded-md p-3 hover:bg-zinc-300"
+                        className={`${
+                            isMainnet ? "button" : "button2"
+                        } text-gray-400 mr-10 border rounded-md p-3 hover:bg-zinc-300`}
                     >
                         LIQUIDITY POOL
                     </Link>
-                    <Connect setConnected={setConnected}></Connect>
+                    <Connect
+                        setConnected={setConnected}
+                        button={isMainnet ? "button" : "button2"}
+                    ></Connect>
                 </div>
             </header>
             <main className="flex justify-center">
-                <div className="w-[450px] space-y-1 mt-16 py-10 text-gray-400 p-10 text-center flex flex-col rounded-xl shadow-2xl shadow-cyan-500">
+                <div
+                    className={`${
+                        isMainnet ? "shadow-cyan-500" : "shadow-yellow-500"
+                    } w-[450px] space-y-1 mt-16 py-10 text-gray-400 p-10 text-center flex flex-col rounded-xl shadow-2xl transition duration-200`}
+                >
                     <p className="text-2xl mb-4">Exchange Tokens</p>
                     <div className="flex flex-col">
                         <div>
@@ -82,6 +121,7 @@ export default function Home() {
                                 chooseTokenDecimalsInputTest={chooseTokenDecimalsInputTest}
                                 chosenTokenDecimalsInputTest={chosenTokenDecimalsInputTest}
                                 setInputAmountTest={setInputAmountTest}
+                                isMainnet={isMainnet}
                             />
                         )}
                     </div>

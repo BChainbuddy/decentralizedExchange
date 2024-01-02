@@ -16,7 +16,7 @@ export default function SwapTest({
     // Wagmi functions
     const provider = useProvider()
     const { data: signer } = useSigner()
-    const { address, isConnected } = useAccount()
+    const { isConnected } = useAccount()
 
     const [addressOne, setAddressOne] = useState(0)
     const [addressTwo, setAddressTwo] = useState(0)
