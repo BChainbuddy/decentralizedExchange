@@ -4,7 +4,7 @@ import { useEffect, useState } from "react"
 import { useAccount, useConnect, useDisconnect } from "wagmi"
 import Link from "next/link"
 
-export default function Connect({ setConnected, button }) {
+export default function Connect({ button }) {
     const [metaMask, changeMetamask] = useState(0) // 0 connect to metamask, 1 connected, 2 download metamask
     const [account, setAccount] = useState("") // acount address
 
@@ -32,13 +32,11 @@ export default function Connect({ setConnected, button }) {
                 changeMetamask(2)
             } else {
                 // If the user is not connected
-                setConnected(false)
                 changeMetamask(0)
                 setActive(true)
             }
         } else {
             // If user is already connected
-            setConnected(true)
             changeMetamask(1)
             prettyAddress(address)
         }
