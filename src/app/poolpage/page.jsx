@@ -1,16 +1,11 @@
 "use client"
 
-import Image from "next/image"
 import { Montserrat } from "next/font/google"
-import Connect from "../../components/connectButton"
 import { useState, useEffect } from "react"
-import Link from "next/link"
-import Modal from "../../components/modal"
 import CONTRACT_ADDRESS from "../../constants/LiquidityPoolAddress.json"
 import ABI from "../../constants/LiquidityPoolAbi.json"
 import ERC20ABI from "../../constants/ERC20abi.json"
 import { useContract, useProvider, useSigner, useAccount } from "wagmi"
-import { ethers } from "ethers"
 import StatsDisplay from "@/components/StatsDisplay"
 import UserContributions from "@/components/UserContributions"
 
@@ -21,7 +16,7 @@ const monserrat = Montserrat({
 
 export default function poolPage() {
     // Liquidity Pool stats
-    const liquidityPoolAddres = CONTRACT_ADDRESS["11155111"][0]
+    const liquidityPoolAddress = CONTRACT_ADDRESS["11155111"][0]
     const [yieldDistributed, setYieldDistributed] = useState(0)
     const [totalLiquidity, setTotalLiquidity] = useState(0)
     const [price, setPrice] = useState(0)
@@ -35,11 +30,11 @@ export default function poolPage() {
     // Wagmi functions
     const provider = useProvider()
     const { data: signer } = useSigner()
-    const { address, isConnected } = useAccount()
+    const { isConnected } = useAccount()
 
     // Retrieving the contract objects with wagmi
     const contract = useContract({
-        address: liquidityPoolAddres.toString(),
+        address: liquidityPoolAddress.toString(),
         abi: ABI,
         signerOrProvider: signer || provider
     })
@@ -77,7 +72,6 @@ export default function poolPage() {
         // console.log(tokens.toString())
         // console.log(useryielded.toString())
     }
-
 
     // Getting the symbols from token contracts
     const getSymbols = async () => {
@@ -203,6 +197,8 @@ export default function poolPage() {
                     />
                 </section>
                 <UserContributions
+                    addressOne={addressOne}
+                    addressTwo={addressTwo}
                     symbolOne={symbolOne}
                     symbolTwo={symbolTwo}
                     contract={contract}

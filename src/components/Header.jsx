@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import Connect from "./connectButton"
+import ConnectButton from "./ConnectButton"
 
 export function Header() {
     const pathname = usePathname()
@@ -18,9 +18,9 @@ export function Header() {
                     href={pathname === "/" ? "/poolpage" : "/"}
                     className="button text-gray-400 mr-10 border rounded-md p-3 hover:bg-zinc-300"
                 >
-                    {pathname === "/" ? "LIQUIDTY POOL" : "EXCHANGE"}
+                    {pathname === "/" ? "LIQUIDITY POOL" : "EXCHANGE"}
                 </Link>
-                <Connect></Connect>
+                <ConnectButton />
             </div>
         </header>
     )

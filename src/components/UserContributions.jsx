@@ -1,113 +1,28 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import Modal from "./Modal"
 import { useAccount } from "wagmi"
+import ClaimRewards from "./ClaimRewards"
+import RemoveLiquidity from "./RemoveLiquidity"
+import AddLiquidity from "./AddLiquidity"
 
-export default function UserContributions({ symbolOne, symbolTwo, contract }) {
-    // Add liquidity Modal
+export default function UserContributions({
+    symbolOne,
+    symbolTwo,
+    contract,
+    addressOne,
+    addressTwo
+}) {
+    // Modals display
     const [displayModal, setDisplayModal] = useState(false)
-    const [amountOfTokenOne, setAmountOfTokenOne] = useState(0)
-    const [amountOfTokenTwo, setAmountOfTokenTwo] = useState(0)
-    const [symbolOneAddLiquidity, setsymbolOneAddLiquidity] = useState(null) // Symbols which are only on the modal, for switch purposes
-    const [symbolTwoAddLiquidity, setsymbolTwoAddLiquidity] = useState(null)
-
-    // Remove liquidity Modal
-    const [removeLiquidity, setRemoveLiquidity] = useState(0)
-    const [displayModal3, setDisplayModal3] = useState(false)
-
-    // Get yield Modal
     const [displayModal2, setDisplayModal2] = useState(false)
-    const [timeLeft, setTimeLeft] = useState(0)
+    const [displayModal3, setDisplayModal3] = useState(false)
 
     // User contribution stats
     const [userLpTokens, setUserLpTokens] = useState()
     const [userYieldDistributed, setUserYieldDistributed] = useState(0)
 
-    const { address, isConnected } = useAccount()
-
-    // Calls a smart contract function to calculate opposite token amount, called in add liquidity modal
-    const getAmountOfTokenNeeded = async a => {
-        if (a > 0) {
-            setAmountOfTokenOne(a)
-            console.log(`This is the amout of input ${ethers.utils.parseEther(a).toString()}`)
-            let address
-            if (symbolOne === symbolOneAddLiquidity) {
-                address = addressOne
-            } else {
-                address = addressTwo
-            }
-            const amountNeeded = await contract.amountOfOppositeTokenNeeded(
-                address.toString(),
-                ethers.utils.parseEther(a)
-            )
-            console.log(`This is the amout of input ${amountNeeded.toString()}`)
-            setAmountOfTokenTwo(ethers.utils.formatEther(amountNeeded))
-        }
-    }
-
-    // Calls a smart contract function to add liquidity to the pool, called in add liqudity modal
-    const addLiquidity = async () => {
-        console.log(`Amount of token one ${(amountOfTokenOne * 1.1).toString()}`)
-        console.log(`Amount of token two ${(amountOfTokenTwo * 1.1).toString()}`)
-        const approvalTx1 = await contractERC20first.approve(
-            liquidityPoolAddres,
-            ethers.utils.parseEther((amountOfTokenOne * 2).toString())
-        )
-        const approvalTx2 = await contractERC20second.approve(
-            liquidityPoolAddres,
-            ethers.utils.parseEther((amountOfTokenTwo * 2).toString())
-        )
-        const approvalReceipt1 = await approvalTx1.wait()
-        const approvalReceipt2 = await approvalTx2.wait()
-        console.log(approvalReceipt1)
-        console.log(approvalReceipt2)
-        const tx = await contract.addLiquidity(
-            addressOne,
-            addressTwo,
-            ethers.utils.parseEther(amountOfTokenOne)
-        )
-        const txreceipt = await tx.wait(1)
-        console.log(txreceipt)
-        console.log(txreceipt.status)
-        if (txreceipt.status === 1) {
-            console.log(`Liquidity added!`)
-            getPoolStats()
-        }
-    }
-
-    // Calls a smart contract function to remove liquidty from the pool, called in remove liquidity modal
-    const removePartLiquidity = async () => {
-        if (removeLiquidity > 0 && removeLiquidity <= 100) {
-            console.log(`Removing ${Math.round(removeLiquidity)} liqudity...`)
-            const tx = await contract.removeLiquidity(Math.round(removeLiquidity))
-            const receipt = await tx.wait()
-            if (receipt.status === 1) {
-                console.log(`Liquidty removed!`)
-                getPoolStats()
-            }
-        }
-    }
-
-    // Calls a smart contract function get yield, called in get yield modal
-    const claimRewards = async () => {
-        const tx = await contract.getYield()
-        const receipt = await tx.wait()
-        if (receipt.status === 1) {
-            console.log(`Yield claimed!`)
-            getPoolStats()
-        }
-    }
-
-    const switchStats = () => {
-        const x = symbolOneAddLiquidity
-        const y = symbolTwoAddLiquidity
-
-        setAmountOfTokenOne(0)
-        setAmountOfTokenTwo(0)
-        setsymbolOneAddLiquidity(y)
-        setsymbolTwoAddLiquidity(x)
-    }
+    const { address } = useAccount()
 
     const getUserStats = async () => {
         // Getting the contract storage variables
@@ -124,13 +39,6 @@ export default function UserContributions({ symbolOne, symbolTwo, contract }) {
             getUserStats()
         }
     }, [contract])
-
-    // Time left updates only when modal2 is called
-    useEffect(() => {
-        if (displayModal2) {
-            getTimeLeft()
-        }
-    }, [displayModal2])
 
     return (
         <>
@@ -179,7 +87,7 @@ export default function UserContributions({ symbolOne, symbolTwo, contract }) {
                             </button>
                             <button
                                 onClick={() => {
-                                    setDisplayModal3(true)
+                                    setDisplayModal2(true)
                                 }}
                                 className="block transition ease-in-out duration-500 border bg-cyan-500 rounded-xl p-2 text-white hover:scale-110 hover:bg-cyan-700 w-44"
                             >
@@ -222,7 +130,7 @@ export default function UserContributions({ symbolOne, symbolTwo, contract }) {
                     <div className="flex justify-center w-1/2">
                         <button
                             onClick={() => {
-                                setDisplayModal2(true)
+                                setDisplayModal3(true)
                             }}
                             className="transition ease-in-out duration-500 border bg-cyan-500 rounded-xl p-2 text-white hover:scale-110 hover:bg-cyan-700 w-44"
                         >
@@ -231,168 +139,26 @@ export default function UserContributions({ symbolOne, symbolTwo, contract }) {
                     </div>
                 </div>
             </section>
-            <Modal
-                isVisible={displayModal}
-                onClose={() => {
-                    setDisplayModal(false)
-                    setAmountOfTokenOne(0)
-                    setAmountOfTokenTwo(0)
-                    setsymbolOneAddLiquidity(symbolOne)
-                    setsymbolTwoAddLiquidity(symbolTwo)
-                }}
-            >
-                <p className="text-center text-white text-2xl">
-                    INVEST INTO
-                    <span className="text-cyan-300">
-                        {symbolOne}/{symbolTwo}
-                    </span>
-                    LIQUIDITY POOL
-                </p>
-                <div className="mx-auto mt-10">
-                    <p className="text-white text-lg">Input base token</p>
-                    <div className="flex flex-row space-x-2">
-                        <input
-                            onChange={e => {
-                                getAmountOfTokenNeeded(e.target.value)
-                            }}
-                            placeholder="0.00"
-                            type="number"
-                            min="0"
-                            step="0.1"
-                            className="pl-1 rounded"
-                        />
-                        <p className="text-white text-xl w-12 text-center">
-                            {symbolOneAddLiquidity}
-                        </p>
-                    </div>
-                </div>
-                <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    strokeWidth="1.5"
-                    stroke="#FFFFFF"
-                    className="w-6 h-6 mx-auto mt-3 cursor-pointer"
-                    onClick={() => {
-                        switchStats()
-                    }}
-                >
-                    <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        d="M3 7.5L7.5 3m0 0L12 7.5M7.5 3v13.5m13.5 0L16.5 21m0 0L12 16.5m4.5 4.5V7.5"
-                    />
-                </svg>
-                <div className="mx-auto mt-3">
-                    <p className="text-white text-lg">Input base token</p>
-                    <div className="flex flex-row space-x-2">
-                        <input
-                            placeholder={amountOfTokenTwo !== 0 ? amountOfTokenTwo : "0.00"}
-                            min="0"
-                            disabled
-                            className="pl-1 rounded"
-                        ></input>
-                        <p className="text-white text-xl w-12 text-center">
-                            {symbolTwoAddLiquidity}
-                        </p>
-                    </div>
-                </div>
-                <button
-                    className={`${
-                        amountOfTokenTwo > 0
-                            ? "transition ease-in-out duration-500 hover:scale-110 hover:bg-cyan-700 bg-cyan-500"
-                            : "bg-cyan-500/20"
-                    } mt-6 mx-auto border  rounded-xl p-2 text-white`}
-                    onClick={() => {
-                        addLiquidity()
-                    }}
-                    disabled={amountOfTokenTwo > 0 ? false : true}
-                >
-                    ADD LIQUIDITY
-                </button>
-                <p className="text-center mt-7 text-white text-lg">
-                    Invest to start earning <span className="text-cyan-300">rewards</span> from the
-                    pool TODAY!
-                </p>
-            </Modal>
-            <Modal
-                isVisible={displayModal2}
-                onClose={() => {
-                    setDisplayModal2(false)
-                }}
-            >
-                <p className="text-center text-white text-2xl">
-                    CLAIM THE <span className="text-cyan-300">REWARDS</span>
-                </p>
-                <button
-                    className={`${
-                        timeLeft === 0
-                            ? "transition ease-in-out duration-500 hover:scale-110 hover:bg-cyan-700 bg-cyan-500"
-                            : "bg-cyan-500/20"
-                    } mt-6 mx-auto border  rounded-xl p-2 text-white`}
-                    onClick={() => {
-                        claimRewards()
-                    }}
-                    disabled={timeLeft === 0 ? false : true}
-                >
-                    CLAIM REWARDS
-                </button>
-                <div className="mx-auto mt-8">
-                    <p className="text-white">
-                        <span className={timeLeft === 0 ? "flex" : "hidden"}>
-                            The rewards are <span className="text-cyan-300">available</span> to
-                            claim
-                        </span>
-                        <span className={timeLeft === 0 ? "hidden" : "flex"}>
-                            You have to wait for{" "}
-                            <span id="time" className="ml-1 text-cyan-300">
-                                {" "}
-                            </span>{" "}
-                            !
-                        </span>
-                    </p>
-                </div>
-            </Modal>
-            <Modal
-                isVisible={displayModal3}
-                onClose={() => {
-                    setDisplayModal3(false)
-                    setRemoveLiquidity(0)
-                }}
-            >
-                <p className="text-center text-white text-2xl">
-                    <span className="text-cyan-300">REMOVE</span> THE LIQUIDITY
-                </p>
-                <div className="mt-8 mx-auto">
-                    <input
-                        onChange={e => {
-                            setRemoveLiquidity(e.target.value)
-                        }}
-                        placeholder="0"
-                        type="number"
-                        min="0"
-                        step="1"
-                        className="pl-1 rounded"
-                    />
-                </div>
-                <button
-                    onClick={() => {
-                        removePartLiquidity()
-                    }}
-                    disabled={removeLiquidity === 0 || removeLiquidity > 100 ? true : false}
-                    className={`${
-                        removeLiquidity <= 100 && removeLiquidity > 0
-                            ? "transition ease-in-out duration-500 hover:scale-110 hover:bg-cyan-700 bg-cyan-500"
-                            : "bg-cyan-500/20"
-                    } mt-6 mx-auto border  rounded-xl p-2 text-white`}
-                >
-                    REMOVE LIQUIDITY
-                </button>
-                <p className="text-white text-center mt-6">
-                    Input a <span className="text-cyan-300">percent</span> of liquidity you want to
-                    remove
-                </p>
-            </Modal>
+            <AddLiquidity
+                closeModal={setDisplayModal}
+                displayModal={displayModal}
+                contract={contract}
+                symbolOne={symbolOne}
+                symbolTwo={symbolTwo}
+                addressOne={addressOne}
+                addressTwo={addressTwo}
+            />
+            <RemoveLiquidity
+                closeModal={setDisplayModal2}
+                displayModal={displayModal2}
+                contract={contract}
+            />
+            <ClaimRewards
+                closeModal={setDisplayModal3}
+                displayModal={displayModal3}
+                contract={contract}
+                address={address}
+            />
         </>
     )
 }

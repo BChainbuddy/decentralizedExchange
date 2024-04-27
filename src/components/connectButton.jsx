@@ -4,7 +4,7 @@ import { useEffect, useState } from "react"
 import { useAccount, useConnect, useDisconnect } from "wagmi"
 import Link from "next/link"
 
-export default function Connect({ button }) {
+export default function ConnectButton() {
     const [metaMask, changeMetamask] = useState(0) // 0 connect to metamask, 1 connected, 2 download metamask
     const [account, setAccount] = useState("") // acount address
 
@@ -61,7 +61,7 @@ export default function Connect({ button }) {
                                 connect({ connector })
                                 changeMetamask(1)
                             }}
-                            className={`${button} text-gray-400 mr-10 border border-white rounded-md p-3 hover:bg-zinc-300`}
+                            className={`button text-gray-400 mr-10 border border-white rounded-md p-3 hover:bg-zinc-300`}
                         >
                             CONNECT WALLET
                         </button>
@@ -69,7 +69,7 @@ export default function Connect({ button }) {
                 </>
             ) : metaMask === 1 ? (
                 <button
-                    className={`${button} text-gray-400 mr-10 border border-white rounded-md p-3 hover:bg-zinc-300 w-40`}
+                    className={`button text-gray-400 mr-10 border border-white rounded-md p-3 hover:bg-zinc-300 w-40`}
                     onClick={disconnect}
                     id="disconnectButton"
                     onMouseEnter={toggleWords}
@@ -81,7 +81,7 @@ export default function Connect({ button }) {
             ) : (
                 <Link href="https://metamask.io/download/" target="_blank">
                     <button
-                        className={`${button} text-gray-400 mr-10 border border-white rounded-md p-3 hover:bg-zinc-300`}
+                        className={`button text-gray-400 mr-10 border border-white rounded-md p-3 hover:bg-zinc-300`}
                     >
                         Download Metamask
                     </button>
