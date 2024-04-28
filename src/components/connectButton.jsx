@@ -40,7 +40,6 @@ export default function ConnectButton() {
             changeMetamask(1)
             prettyAddress(address)
         }
-        console.log(isConnected)
     }, [isConnected])
 
     // Makes the address cleaner
