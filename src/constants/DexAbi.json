@@ -1,0 +1,168 @@
+[
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "tracker",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "constructor"
+    },
+    {
+      "inputs": [],
+      "name": "PoolTracker_cantSwapSameToken",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "SwapRouter_tokensCantBeSwapped",
+      "type": "error"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "userAddress",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "address1",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "address2",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "address1Amount",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "address2Amount",
+          "type": "uint256"
+        }
+      ],
+      "name": "swap",
+      "type": "event"
+    },
+    {
+      "stateMutability": "payable",
+      "type": "fallback"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "address1",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "address2",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "inputAmount",
+          "type": "uint256"
+        }
+      ],
+      "name": "getSwapAmount",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "address1",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "address2",
+          "type": "address"
+        }
+      ],
+      "name": "getSwapFee",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "address1",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "address2",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "inputAmount",
+          "type": "uint256"
+        }
+      ],
+      "name": "swapAsset",
+      "outputs": [],
+      "stateMutability": "payable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "address1",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "address2",
+          "type": "address"
+        }
+      ],
+      "name": "tokenToRoute",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "stateMutability": "payable",
+      "type": "receive"
+    }
+  ]

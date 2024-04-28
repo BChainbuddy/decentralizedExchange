@@ -1,26 +1,24 @@
-'use client'
+"use client"
 
-import { WagmiConfig, createClient, configureChains, sepolia } from "wagmi";
-import { publicProvider } from "wagmi/providers/public";
-
-import { InjectedConnector } from "wagmi/connectors/injected";
-import { WalletConnectConnector } from "wagmi/connectors/walletConnect";
-
-const { provider, webSocketProvider } = configureChains(
-    [sepolia],
-    [publicProvider()]
-)
-
-const client = createClient({
-    autoConnect: true,
-    provider,
-    webSocketProvider
-})
+import { http, createConfig } from "wagmi"
+import { mainnet, sepolia } from "wagmi/chains"
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
+import { WagmiProvider } from "wagmi"
 
 export default function Providers({ children }) {
-  return (
-    <WagmiConfig client={client}>
-        {children}
-    </WagmiConfig>
-  )
+    const config = createConfig({
+        chains: [mainnet, sepolia],
+        transports: {
+            [mainnet.id]: http(),
+            [sepolia.id]: http()
+        }
+    })
+
+    const queryClient = new QueryClient()
+
+    return (
+        <WagmiProvider config={config}>
+            <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+        </WagmiProvider>
+    )
 }

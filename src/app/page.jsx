@@ -2,33 +2,57 @@
 
 import Image from "next/image"
 import { Montserrat } from "next/font/google"
-import Input from "../components/input"
-import Output from "../components/output"
-import Swap from "../components/swap"
-import Connect from "../components/ConnectButton"
-import { useState } from "react"
-import Link from "next/link"
-import InputTestnet from "@/components/inputTestnet"
-import OutputTestnet from "@/components/outputTestnet"
-import SwapTest from "@/components/swapTest"
+import { useEffect, useState } from "react"
+import { useAccount, http, createConfig, useReadContract, useReadContracts } from "wagmi"
+import { mainnet, sepolia } from "wagmi/chains"
+
+import POOLTRACKER_ABI from "../constants/PoolTrackerAbi.json"
+import POOLTRACKER_ADDRESS from "../constants/PoolTrackerAddress.json"
+import ERC20ABI from "../constants/ERC20abi.json"
+import { readContract } from "@wagmi/core"
+import DexInput from "../components/DexInput"
+import DexOutput from "@/components/DexOutput"
 
 const monserrat = Montserrat({
     subsets: ["latin"],
     weight: ["400"]
 })
 
-export default function Home() {
-    const [isMainnet, setIsMainnet] = useState(false) // to switch between mainnet and testnet tokens
+export default function Dex() {
+    const [chosenTokenInput, setChosenTokenInput] = useState({ symbol: "Symbol" })
+    const [chosenTokenOutput, setChosenTokenOutput] = useState({ symbol: "Symbol" })
+    const [inputAmount, setInputAmount] = useState(0)
+    const [tokenList, setTokenList] = useState([])
 
-    // Testnet tokens(liquidityPool)
-    const [chosenTokenInputTest, chooseTokenInputTest] = useState("Symbol")
-    const [chosenTokenOutputTest, chooseTokenOutputTest] = useState("Symbol")
-    const [chosenTokenAddressInputTest, chooseTokenAddressInputTest] = useState(0)
-    const [chosenTokenAddressOutputTest, chooseTokenAddressOutputTest] = useState(0)
-    const [chosenTokenDecimalsInputTest, chooseTokenDecimalsInputTest] = useState(0)
-    const [chosenTokenDecimalsOutputTest, chooseTokenDecimalsOutputTest] = useState(0)
-    const [inputAmountTest, setInputAmountTest] = useState(0)
-    const [outputAmountTest, setOutputAmountTest] = useState(0)
+    const { isConnected } = useAccount()
+
+    const { data: tokenAddresses } = useReadContract({
+        abi: POOLTRACKER_ABI,
+        address: POOLTRACKER_ADDRESS["11155111"].toString(),
+        functionName: "tokenList"
+    })
+
+    const { data: tokenSymbols } = useReadContracts({
+        contracts: tokenAddresses?.map(address => ({
+            address: address,
+            functionName: "symbol",
+            abi: ERC20ABI
+        })),
+        watch: true
+    })
+
+    const getTokenList = () => {
+        return tokenAddresses.map((address, index) => ({
+            address: address,
+            symbol: tokenSymbols[index].result
+        }))
+    }
+
+    useEffect(() => {
+        if (tokenSymbols) {
+            setTokenList(getTokenList())
+        }
+    }, [tokenSymbols])
 
     return (
         <div className={monserrat.className}>
@@ -36,18 +60,13 @@ export default function Home() {
                 <div className="shadow-cyan-500 w-[450px] space-y-1 mt-16 py-10 text-gray-400 p-10 text-center flex flex-col rounded-xl shadow-2xl transition duration-200">
                     <p className="text-2xl mb-4">Exchange Tokens</p>
                     <div className="flex flex-col">
-                        <div>
-                            <p className="ml-2 text-left">Input</p>
-                        </div>
-                        <InputTestnet
-                            chosenTokenInputTest={chosenTokenInputTest}
-                            chooseTokenInputTest={chooseTokenInputTest}
-                            chosenTokenAddressInputTest={chosenTokenAddressInputTest}
-                            chooseTokenAddressInputTest={chooseTokenAddressInputTest}
-                            chooseTokenDecimalsInputTest={chooseTokenDecimalsInputTest}
-                            chosenTokenDecimalsInputTest={chosenTokenDecimalsInputTest}
-                            setInputAmountTest={setInputAmountTest}
-                            isMainnet={isMainnet}
+                        <p className="ml-2 text-left">Input</p>
+                        <DexInput
+                            chosenTokenInput={chosenTokenInput}
+                            setChosenTokenInput={setChosenTokenInput}
+                            tokenList={tokenList}
+                            setInputAmount={setInputAmount}
+                            inputAmount={inputAmount}
                         />
                     </div>
                     <div className="flex justify-center">
@@ -60,30 +79,23 @@ export default function Home() {
                         ></Image>
                     </div>
                     <div>
-                        <div>
-                            <p className="ml-2 text-left">Output</p>
-                        </div>
-                        <OutputTestnet
-                            chosenTokenOutputTest={chosenTokenOutputTest}
-                            chooseTokenOutputTest={chooseTokenOutputTest}
-                            chosenTokenAddressOutputTest={chosenTokenAddressOutputTest}
-                            chooseTokenAddressOutputTest={chooseTokenAddressOutputTest}
-                            chooseTokenDecimalsOutputTest={chooseTokenDecimalsOutputTest}
-                            chosenTokenDecimalsOutputTest={chosenTokenDecimalsOutputTest}
-                            inputAmountTest={inputAmountTest}
-                            setOutputAmountTest={setOutputAmountTest}
-                            chosenTokenAddressInputTest={chosenTokenAddressInputTest}
-                            outputAmountTest={outputAmountTest}
+                        <p className="ml-2 text-left">Output</p>
+                        <DexOutput
+                            chosenTokenInput={chosenTokenInput}
+                            tokenList={tokenList}
+                            inputAmount={inputAmount}
+                            chosenTokenOutput={chosenTokenOutput}
+                            setChosenTokenOutput={setChosenTokenOutput}
                         />
                     </div>
-                    <SwapTest
+                    {/* <SwapTest
                         chosenTokenAddressInputTest={chosenTokenAddressInputTest}
                         chosenTokenAddressOutputTest={chosenTokenAddressOutputTest}
                         chosenTokenDecimalsOutputTest={chosenTokenDecimalsOutputTest}
                         chosenTokenDecimalsInputTest={chosenTokenDecimalsInputTest}
                         inputAmountTest={inputAmountTest}
                         outputAmountTest={outputAmountTest}
-                    ></SwapTest>
+                    ></SwapTest> */}
                 </div>
             </main>
         </div>
