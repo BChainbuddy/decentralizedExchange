@@ -1,3 +1,5 @@
+"use client"
+
 import { useState } from "react"
 import TokenList from "./TokenList"
 
@@ -48,7 +50,15 @@ export default function DexInput({
                         : chosenTokenInput.symbol}
                 </button>
             </div>
-            {modal ? <TokenList tokenList={tokenList} willChooseToken={willChooseToken} showModal={showModal} /> : <></>}
+            {modal ? (
+                <TokenList
+                    tokenList={tokenList}
+                    willChooseToken={willChooseToken}
+                    showModal={showModal}
+                />
+            ) : (
+                <></>
+            )}
         </div>
     )
 }

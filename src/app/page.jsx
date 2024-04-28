@@ -9,9 +9,9 @@ import { mainnet, sepolia } from "wagmi/chains"
 import POOLTRACKER_ABI from "../constants/PoolTrackerAbi.json"
 import POOLTRACKER_ADDRESS from "../constants/PoolTrackerAddress.json"
 import ERC20ABI from "../constants/ERC20abi.json"
-import { readContract } from "@wagmi/core"
 import DexInput from "../components/DexInput"
 import DexOutput from "@/components/DexOutput"
+import DexSwap from "@/components/DexSwap"
 
 const monserrat = Montserrat({
     subsets: ["latin"],
@@ -88,14 +88,11 @@ export default function Dex() {
                             setChosenTokenOutput={setChosenTokenOutput}
                         />
                     </div>
-                    {/* <SwapTest
-                        chosenTokenAddressInputTest={chosenTokenAddressInputTest}
-                        chosenTokenAddressOutputTest={chosenTokenAddressOutputTest}
-                        chosenTokenDecimalsOutputTest={chosenTokenDecimalsOutputTest}
-                        chosenTokenDecimalsInputTest={chosenTokenDecimalsInputTest}
-                        inputAmountTest={inputAmountTest}
-                        outputAmountTest={outputAmountTest}
-                    ></SwapTest> */}
+                    <DexSwap
+                        chosenTokenInput={chosenTokenInput}
+                        chosenTokenOutput={chosenTokenOutput}
+                        inputAmount={inputAmount}
+                    />
                 </div>
             </main>
         </div>

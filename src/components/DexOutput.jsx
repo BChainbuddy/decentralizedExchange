@@ -1,3 +1,5 @@
+"use client"
+
 import TokenList from "./TokenList"
 import SWAPROUTER_ADDRESS from "../constants/DexAddress.json"
 import SWAPROUTER_ABI from "../constants/DexAbi.json"
