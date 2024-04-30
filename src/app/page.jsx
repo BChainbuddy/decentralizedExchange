@@ -24,8 +24,6 @@ export default function Dex() {
     const [inputAmount, setInputAmount] = useState(0)
     const [tokenList, setTokenList] = useState([])
 
-    const { isConnected } = useAccount()
-
     const { data: tokenAddresses } = useReadContract({
         abi: POOLTRACKER_ABI,
         address: POOLTRACKER_ADDRESS["11155111"].toString(),

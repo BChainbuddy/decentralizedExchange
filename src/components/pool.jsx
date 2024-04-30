@@ -49,7 +49,7 @@ export default function Pool({ pool }) {
 
     return (
         <div
-            className="transition-all duration-500 border-2 text-gray-400 cursor-pointer text-center rounded-xl px-3 py-2 space-y-3 hover:shadow-xl hover:shadow-cyan-500 hover:text-cyan-500 hover:rotate-1 hover:-translate-y-2"
+            className="transition-all duration-500 border-2 text-gray-400 cursor-pointer text-center rounded-xl px-3 py-2 space-y-3 hover:shadow-xl hover:shadow-cyan-500 hover:text-cyan-500 hover:-translate-y-2"
             onClick={() => {
                 router.push(`/pools/${pool}`)
             }}

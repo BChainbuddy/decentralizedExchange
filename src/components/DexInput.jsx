@@ -36,10 +36,15 @@ export default function DexInput({
                     id="Amount"
                     name="Amount"
                     step="0.1"
-                    placeholder="100"
+                    placeholder="0"
                     min="0"
-                    value={inputAmount}
-                    onChange={e => setInputAmount(e.target.value)}
+                    onChange={e => {
+                        if (e.target.value > 0) {
+                            setInputAmount(e.target.value)
+                        } else {
+                            setInputAmount(0)
+                        }
+                    }}
                 ></input>
                 <button
                     className="transition-all ease-in-out duration-300 border-2 rounded-r-md px-3 hover:bg-zinc-300 hover:text-gray-600"

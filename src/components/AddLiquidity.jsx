@@ -63,10 +63,6 @@ export default function AddLiquidity({
     })
 
     const handleClick = () => {
-        console.log(Number(allowanceInput1) / 10 ** 18)
-        console.log(inputAmount)
-        console.log(Number(allowanceInput2) / 10 ** 18)
-        console.log(amountNeeded)
         if (
             Number(allowanceInput1) / 10 ** 18 < inputAmount ||
             Number(allowanceInput2) / 10 ** 18 < Number(amountNeeded) / 10 ** 18
@@ -193,7 +189,7 @@ export default function AddLiquidity({
                 />
             </svg>
             <div className="mx-auto mt-3">
-                <p className="text-white text-lg">Input base token</p>
+                <p className="text-white text-lg">Tokens needed</p>
                 <div className="flex flex-row space-x-2">
                     <input
                         placeholder={
@@ -203,7 +199,9 @@ export default function AddLiquidity({
                         }
                         min="0"
                         disabled
-                        className="pl-1 rounded"
+                        className={`pl-1 rounded bg-white ${
+                            inputAmount ? "placeholder:text-gray-600" : ""
+                        }`}
                     ></input>
                     <p className="text-white text-xl w-12 text-center">{symbolTwoAddLiquidity}</p>
                 </div>

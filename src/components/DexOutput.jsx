@@ -3,8 +3,9 @@
 import TokenList from "./TokenList"
 import SWAPROUTER_ADDRESS from "../constants/DexAddress.json"
 import SWAPROUTER_ABI from "../constants/DexAbi.json"
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import { useReadContract } from "wagmi"
+import { ethers } from "ethers"
 
 export default function DexOutput({
     tokenList,
@@ -26,9 +27,13 @@ export default function DexOutput({
 
     const { data: swapAmount } = useReadContract({
         abi: SWAPROUTER_ABI,
-        address: SWAPROUTER_ADDRESS["11155111"].toString(),
+        address: SWAPROUTER_ADDRESS["11155111"],
         functionName: "getSwapAmount",
-        args: [chosenTokenInput.address, chosenTokenOutput.address, inputAmount]
+        args: [
+            chosenTokenInput.address,
+            chosenTokenOutput.address,
+            ethers.parseEther(inputAmount.toString())
+        ]
     })
 
     function willChooseToken(symbol, address) {
@@ -41,13 +46,15 @@ export default function DexOutput({
         <div>
             <div className="flex flex-row p-1">
                 <input
-                    className="bg-slate-300 rounded-l-md border-2 p-2 placeholder:text-gray-600"
+                    className={`bg-slate-300 rounded-l-md border-2 p-2 ${
+                        inputAmount ? "placeholder:text-gray-600" : ""
+                    }`}
                     type="number"
                     id="Amount"
                     name="Amount"
                     step="0.1"
                     min="0"
-                    placeholder={swapAmount}
+                    placeholder={swapAmount && inputAmount ? Number(swapAmount) / 10 ** 18 : "0"}
                     disabled
                 ></input>
                 <button

@@ -1,40 +1,49 @@
 import { useEffect, useState } from "react"
 import Modal from "./Modal"
+import { useReadContract, useWriteContract, useAccount } from "wagmi"
+import ABI from "../constants/LiquidityPoolAbi.json"
 
-export default function ClaimRewards({
-    closeModal,
-    displayModal,
-    contract,
-    address
-}) {
-    const [timeLeft, setTimeLeft] = useState(0)
+export default function ClaimRewards({ closeModal, displayModal, poolAddress }) {
+    const { address } = useAccount()
+
+    const { status, writeContract: claimRewardsFunc, isPending } = useWriteContract()
+
+    const { data: timeLeft } = useReadContract({
+        abi: ABI,
+        address: poolAddress,
+        functionName: "lastYieldFarmedTime",
+        args: [address]
+    })
+
+    const { data: isTime } = useReadContract({
+        abi: ABI,
+        address: poolAddress,
+        functionName: "isTime",
+        account: address
+    })
 
     const getTimeLeft = async () => {
-        console.log("Get time left...")
-        const response = await contract.isTime()
-        if (!response) {
-            console.log("TimeLock is on")
-            const timestamp = await contract.lastYieldFarmedTime(address)
+        if (!isTime && timeLeft) {
+            // console.log("TimeLock is on")
+            const timestamp = timeLeft
             const currentTimeStamp = Math.round(Date.now() / 1000)
-            const timeLeft = parseInt(timestamp) + 24 * 60 * 60 - currentTimeStamp
-            setTimeLeft(timeLeft)
-            const hoursLeft = Math.floor(timeLeft / 60 / 60)
-            const minutesLeft = Math.floor(timeLeft / 60) % 24
+            const time = parseInt(timestamp) + 24 * 60 * 60 - currentTimeStamp
+            const hoursLeft = Math.floor(time / 60 / 60)
+            const minutesLeft = Math.floor(time / 60) % 24
             if (document.getElementById("time") !== null) {
                 document.getElementById("time").innerHTML = `${hoursLeft} H ${minutesLeft} min`
             }
         }
-        console.log("TimeLock is not on")
+        // console.log("TimeLock is not on")
     }
 
     // Calls a smart contract function get yield, called in get yield modal
     const claimRewards = async () => {
-        const tx = await contract.getYield()
-        const receipt = await tx.wait()
-        if (receipt.status === 1) {
-            console.log(`Yield claimed!`)
-            // getPoolStats()
-        }
+        claimRewardsFunc({
+            address: poolAddress,
+            abi: ABI,
+            functionName: "getYield"
+        })
     }
 
     useEffect(() => {
@@ -55,23 +64,23 @@ export default function ClaimRewards({
             </p>
             <button
                 className={`${
-                    timeLeft === 0
+                    isTime
                         ? "transition ease-in-out duration-500 hover:scale-110 hover:bg-cyan-700 bg-cyan-500"
                         : "bg-cyan-500/20"
                 } mt-6 mx-auto border  rounded-xl p-2 text-white`}
                 onClick={() => {
                     claimRewards()
                 }}
-                disabled={timeLeft === 0 ? false : true}
+                disabled={isTime ? false : true}
             >
                 CLAIM REWARDS
             </button>
             <div className="mx-auto mt-8">
                 <p className="text-white">
-                    <span className={timeLeft === 0 ? "flex" : "hidden"}>
-                        The rewards are <span className="text-cyan-300">available</span> to claim
+                    <span className={isTime ? "flex" : "hidden"}>
+                        The rewards are <span className="text-cyan-300 mr-1 ml-1">available</span> to claim
                     </span>
-                    <span className={timeLeft === 0 ? "hidden" : "flex"}>
+                    <span className={isTime ? "hidden" : "flex"}>
                         You have to wait for
                         <span id="time" className="ml-1 text-cyan-300"></span>!
                     </span>
