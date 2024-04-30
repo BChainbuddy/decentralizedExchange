@@ -41,7 +41,7 @@ export default function DexOutput({
         <div>
             <div className="flex flex-row p-1">
                 <input
-                    className="bg-slate-300 rounded-l-md border-2 p-2 text-gray-600"
+                    className="bg-slate-300 rounded-l-md border-2 p-2 placeholder:text-gray-600"
                     type="number"
                     id="Amount"
                     name="Amount"
@@ -51,7 +51,7 @@ export default function DexOutput({
                     disabled
                 ></input>
                 <button
-                    className="transition ease-in-out duration-250 border-2 rounded-r-md px-3 hover:bg-zinc-300 hover:text-gray-600"
+                    className="transition-all ease-in-out duration-300 border-2 rounded-r-md px-3 hover:bg-zinc-300 hover:text-gray-600"
                     onClick={openModal}
                 >
                     {chosenTokenOutput.symbol.length > 6

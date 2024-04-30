@@ -1,44 +1,39 @@
 "use client"
 
-import { useEffect, useState } from "react"
-import { useAccount } from "wagmi"
+import { useState } from "react"
+import { useAccount, useReadContract } from "wagmi"
 import ClaimRewards from "./ClaimRewards"
 import RemoveLiquidity from "./RemoveLiquidity"
 import AddLiquidity from "./AddLiquidity"
+import ABI from "../constants/LiquidityPoolAbi.json"
 
 export default function UserContributions({
     symbolOne,
     symbolTwo,
-    contract,
     addressOne,
-    addressTwo
+    addressTwo,
+    poolAddress
 }) {
     // Modals display
     const [displayModal, setDisplayModal] = useState(false)
     const [displayModal2, setDisplayModal2] = useState(false)
     const [displayModal3, setDisplayModal3] = useState(false)
 
-    // User contribution stats
-    const [userLpTokens, setUserLpTokens] = useState()
-    const [userYieldDistributed, setUserYieldDistributed] = useState(0)
-
     const { address } = useAccount()
 
-    const getUserStats = async () => {
-        // Getting the contract storage variables
-        const tokens = await contract.getLpTokenQuantity(address)
-        const useryielded = await contract.yieldTaken(address)
+    const { data: userLpTokens } = useReadContract({
+        abi: ABI,
+        address: poolAddress,
+        functionName: "getLpTokenQuantity",
+        args: [address, poolAddress]
+    })
 
-        // Updating the state variables
-        setUserLpTokens(tokens / 10 ** 36)
-        setUserYieldDistributed(useryielded / 10 ** 18)
-    }
-
-    useEffect(() => {
-        if (contract) {
-            getUserStats()
-        }
-    }, [contract])
+    const { data: userYieldDistributed } = useReadContract({
+        abi: ABI,
+        address: poolAddress,
+        functionName: "yieldTaken",
+        args: [address, poolAddress]
+    })
 
     return (
         <>
@@ -72,7 +67,7 @@ export default function UserContributions({
                             <span className="sr-only">Loading...</span>
                         </div>
                         <p className={`${symbolTwo === "Loading..." ? "hidden" : ""} text-base`}>
-                            {Math.floor(userLpTokens).toString()}
+                            {Math.floor(Number(userLpTokens) / 10 ** 36)}
                         </p>
                     </div>
                     <div className="flex justify-center w-1/2">
@@ -124,7 +119,7 @@ export default function UserContributions({
                             <span className="sr-only">Loading...</span>
                         </div>
                         <p className={`${symbolTwo === "Loading..." ? "hidden" : ""} text-base`}>
-                            {userYieldDistributed.toString()}
+                            {userYieldDistributed ? Number(userYieldDistributed) / 10 ** 18 : ""}
                         </p>
                     </div>
                     <div className="flex justify-center w-1/2">
@@ -142,21 +137,16 @@ export default function UserContributions({
             <AddLiquidity
                 closeModal={setDisplayModal}
                 displayModal={displayModal}
-                contract={contract}
                 symbolOne={symbolOne}
                 symbolTwo={symbolTwo}
                 addressOne={addressOne}
                 addressTwo={addressTwo}
+                poolAddress={poolAddress}
             />
-            <RemoveLiquidity
-                closeModal={setDisplayModal2}
-                displayModal={displayModal2}
-                contract={contract}
-            />
+            <RemoveLiquidity closeModal={setDisplayModal2} displayModal={displayModal2} />
             <ClaimRewards
                 closeModal={setDisplayModal3}
                 displayModal={displayModal3}
-                contract={contract}
                 address={address}
             />
         </>

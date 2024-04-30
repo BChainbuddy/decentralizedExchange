@@ -44,7 +44,7 @@ export default function DexSwap({ chosenTokenInput, chosenTokenOutput, inputAmou
     })
 
     const handleClick = () => {
-        if (Number(allowanceInput) / 10 ** 18 <= inputAmount) {
+        if (Number(allowanceInput) / 10 ** 18 < inputAmount) {
             approveToken()
             return
         }
@@ -85,29 +85,24 @@ export default function DexSwap({ chosenTokenInput, chosenTokenOutput, inputAmou
         }
     }
 
-    function shortenSymbol(longSymbol) {
-        const newSymbol = longSymbol.substring(0, 5).toString() + ".."
-        return newSymbol
-    }
-
     return (
         <div>
             <p className="text-start ml-2 mt-3 text-sm">
                 Estimated gas fee: <span>{feeAmount ? Number(feeAmount) / 10 ** 18 : "0"}</span>
             </p>
             <button
-                className="border-2 rounded-lg py-2 px-16 mt-6 hover:bg-zinc-300"
+                className={`border-2 rounded-lg py-2 text-center mt-6 w-32 transition-all duration-500 ease-out ${
+                    inputAmount && chosenTokenInput !== "Symbol" && chosenTokenOutput !== "Symbol"
+                        ? "bg-cyan-500 hover:bg-cyan-600 hover:scale-105 text-white"
+                        : ""
+                }`}
                 onClick={handleClick}
                 disabled={inputAmount === 0}
             >
-                {Number(allowanceInput) / 10 ** 18 > inputAmount ||
+                {Number(allowanceInput) / 10 ** 18 >= inputAmount ||
                 chosenTokenInput.symbol === "Symbol"
                     ? "SWAP"
-                    : `Approve ${
-                          chosenTokenInput.symbol.length > 6
-                              ? shortenSymbol(chosenTokenInput.symbol)
-                              : chosenTokenInput.symbol
-                      }`}
+                    : "APPROVE"}
             </button>
         </div>
     )

@@ -51,7 +51,7 @@ export default function TokenList({ tokenList, willChooseToken, showModal }) {
                 >
                     {filteredTokens.map((token, index) => (
                         <button
-                            className="hover-bg-zinc-300 flex justify-center items-center border border-gray-600 py-2 space-x-1"
+                            className="hover:bg-zinc-300 transition-colors duration-100 ease-out flex justify-center items-center border border-gray-600 py-2 space-x-1"
                             key={`${token.symbol}-${index}`}
                             onClick={() => {
                                 willChooseToken(token.symbol, token.address)

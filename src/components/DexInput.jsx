@@ -42,7 +42,7 @@ export default function DexInput({
                     onChange={e => setInputAmount(e.target.value)}
                 ></input>
                 <button
-                    className="transition ease-in-out duration-250 border-2 rounded-r-md px-3 hover:bg-zinc-300 hover:text-gray-600"
+                    className="transition-all ease-in-out duration-300 border-2 rounded-r-md px-3 hover:bg-zinc-300 hover:text-gray-600"
                     onClick={openModal}
                 >
                     {chosenTokenInput.symbol.length > 6

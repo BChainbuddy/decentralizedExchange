@@ -1,4 +1,4 @@
-export default function StatsDisplay({ src, title, value, path }) {
+export default function StatsDisplay({ src, title, path }) {
     return (
         <div className="flex flex-col text-center mt-16 space-y-1 w-1/3 p-1">
             <div className="flex flex-row items-center justify-center space-x-1">
@@ -14,7 +14,7 @@ export default function StatsDisplay({ src, title, value, path }) {
                     <path strokeLinecap="round" strokeLinejoin="round" d={path} />
                 </svg>
             </div>
-            <p className="text-lg number">{value}</p>
+            <p className="text-lg number">0</p>
         </div>
     )
 }

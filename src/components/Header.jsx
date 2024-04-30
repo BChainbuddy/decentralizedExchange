@@ -15,10 +15,10 @@ export function Header() {
             </div>
             <div className="flex flex-row">
                 <Link
-                    href={pathname === "/" ? "/poolpage" : "/"}
+                    href={pathname === "/" ? "/pools" : "/"}
                     className="button text-gray-400 mr-10 border rounded-md p-3 hover:bg-zinc-300"
                 >
-                    {pathname === "/" ? "LIQUIDITY POOL" : "EXCHANGE"}
+                    {pathname === "/" ? "LIQUIDITY POOLS" : "EXCHANGE"}
                 </Link>
                 <ConnectButton />
             </div>

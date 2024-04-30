@@ -1,27 +1,32 @@
 import { useState } from "react"
 import Modal from "./Modal"
+import { useWriteContract } from "wagmi"
+import ABI from "../constants/LiquidityPoolAbi.json"
 
-export default function RemoveLiquidity({ closeModal, displayModal, contract }) {
+export default function RemoveLiquidity({ closeModal, displayModal, poolAddress }) {
     // Calls a smart contract function to remove liquidity from the pool, called in remove liquidity modal
-    const [removeLiquidity, setRemoveLiquidity] = useState(0)
+    const [percent, setPercent] = useState(0)
+
+    const { status, writeContract: removeLiquidity, isPending } = useWriteContract()
 
     const removePartLiquidity = async () => {
-        if (removeLiquidity > 0 && removeLiquidity <= 100) {
-            console.log(`Removing ${Math.round(removeLiquidity)} liqudity...`)
-            const tx = await contract.removeLiquidity(Math.round(removeLiquidity))
-            const receipt = await tx.wait()
-            if (receipt.status === 1) {
-                console.log(`Liquidty removed!`)
-                // getPoolStats()
-            }
+        if (percent > 0 && percent <= 100) {
+            console.log(`Removing ${Math.round(percent)} liqudity...`)
+            removeLiquidity({
+                abi: ABI,
+                address: poolAddress,
+                functionName: "removeLiquidity",
+                args: [Math.round(percent)]
+            })
         }
     }
+
     return (
         <Modal
             isVisible={displayModal}
             onClose={() => {
                 closeModal(false)
-                setRemoveLiquidity(0)
+                setPercent(0)
             }}
         >
             <p className="text-center text-white text-2xl">
@@ -30,7 +35,7 @@ export default function RemoveLiquidity({ closeModal, displayModal, contract }) 
             <div className="mt-8 mx-auto">
                 <input
                     onChange={e => {
-                        setRemoveLiquidity(e.target.value)
+                        setPercent(e.target.value)
                     }}
                     placeholder="0"
                     type="number"
@@ -44,9 +49,9 @@ export default function RemoveLiquidity({ closeModal, displayModal, contract }) 
                 onClick={() => {
                     removePartLiquidity()
                 }}
-                disabled={removeLiquidity === 0 || removeLiquidity > 100 ? true : false}
+                disabled={percent === 0 || percent > 100 ? true : false}
                 className={`${
-                    removeLiquidity <= 100 && removeLiquidity > 0
+                    percent <= 100 && percent > 0
                         ? "transition ease-in-out duration-500 hover:scale-110 hover:bg-cyan-700 bg-cyan-500"
                         : "bg-cyan-500/20"
                 } mt-6 mx-auto border  rounded-xl p-2 text-white`}
