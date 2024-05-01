@@ -47,16 +47,25 @@ export default function Pool({ pool }) {
 
     const router = useRouter()
 
+    function shortenSymbol(longSymbol) {
+        const newSymbol = longSymbol.substring(0, 5).toString() + ".."
+        return newSymbol
+    }
+
     return (
         <div
-            className="transition-all duration-500 border-2 text-gray-400 cursor-pointer text-center rounded-xl px-3 py-2 space-y-3 hover:shadow-xl hover:shadow-cyan-500 hover:text-cyan-500 hover:-translate-y-2"
+            className="transition-all duration-500 border-2 text-gray-400 cursor-pointer text-center rounded-xl py-2 space-y-3 hover:shadow-lg hover:shadow-cyan-500 hover:text-cyan-500 hover:-translate-y-2 w-44 h-52"
             onClick={() => {
                 router.push(`/pools/${pool}`)
             }}
         >
             <div className="mt-2">
-                <p className="text-xl">
-                    {symbolTwo && symbolOne ? `${symbolOne}/${symbolTwo}` : "Loading pool..."}
+                <p className="text-lg">
+                    {symbolTwo && symbolOne
+                        ? `${symbolOne.length > 6 ? shortenSymbol(symbolOne) : symbolOne}/${
+                              symbolTwo.length > 6 ? shortenSymbol(symbolTwo) : symbolTwo
+                          }`
+                        : "Loading pool..."}
                 </p>
                 <p className="text-sm mt-2">
                     price: <span>{(Number(getPrice) / 10 ** 18).toFixed(2).toString()}</span>
@@ -64,7 +73,7 @@ export default function Pool({ pool }) {
             </div>
             <div>
                 <p className="text-base">YIELD GIVEN</p>
-                <p>{yielded ? (Number(yielded) / 10 ** 18).toString() : ""}</p>
+                <p>{yielded ? (Number(yielded) / 10 ** 18).toString() : "0"}</p>
             </div>
             <div>
                 <p className="text-base">TTL LIQUIDITY</p>

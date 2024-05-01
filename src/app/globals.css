@@ -37,3 +37,22 @@
 #contributions {
     background-image: url("../../public/background.png");
 }
+
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: black;
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: lightblue;
+    border-radius: 10px;
+    border: 2px solid black;
+}
+
+* {
+    scrollbar-width: thin;
+    scrollbar-color: lightblue black;
+}

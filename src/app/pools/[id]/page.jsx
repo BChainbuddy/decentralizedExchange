@@ -13,7 +13,7 @@ const monserrat = Montserrat({
     weight: ["400"]
 })
 
-export default function poolPage(props) {
+export default function PoolPage(props) {
     const liquidityPoolAddress = props.params.id
 
     const { isConnected } = useAccount()

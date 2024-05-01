@@ -131,7 +131,7 @@ export default function UserContributions({
                                 >
                                     {userYieldDistributed
                                         ? Number(userYieldDistributed) / 10 ** 18
-                                        : ""}
+                                        : "0"}
                                 </p>
                             </div>
                             <div className="flex justify-center w-1/2">
