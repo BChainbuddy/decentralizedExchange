@@ -1,20 +1,13 @@
-"use client"
-
 import { useState } from "react"
 import TokenList from "./TokenList"
 
-export default function DexInput({
-    tokenList,
+export default function TokenInput({
     chosenTokenInput,
-    setChosenTokenInput,
     setInputAmount,
+    setChosenTokenInput,
+    tokenList
 }) {
     const [modal, showModal] = useState(false)
-
-    function shortenSymbol(longSymbol) {
-        const newSymbol = longSymbol.substring(0, 5).toString() + ".."
-        return newSymbol
-    }
 
     const openModal = () => {
         showModal(true)
@@ -26,8 +19,13 @@ export default function DexInput({
         setChosenTokenInput({ address: address, symbol: symbol })
     }
 
+    function shortenSymbol(longSymbol) {
+        const newSymbol = longSymbol.substring(0, 5).toString() + ".."
+        return newSymbol
+    }
+
     return (
-        <div>
+        <>
             <div className="flex flex-row p-1">
                 <input
                     className="bg-slate-300 rounded-l-md border-2 p-2 text-gray-600"
@@ -44,7 +42,7 @@ export default function DexInput({
                             setInputAmount(0)
                         }
                     }}
-                ></input>
+                />
                 <button
                     className="transition-all ease-in-out duration-300 border-2 rounded-r-md px-3 hover:bg-zinc-300 hover:text-gray-600"
                     onClick={openModal}
@@ -63,6 +61,6 @@ export default function DexInput({
             ) : (
                 <></>
             )}
-        </div>
+        </>
     )
 }

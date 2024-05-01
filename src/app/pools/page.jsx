@@ -7,6 +7,7 @@ import POOLTRACKER_ADDRESS from "../../constants/PoolTrackerAddress.json"
 import PoolList from "@/components/PoolList"
 import ABI from "../../constants/LiquidityPoolAbi.json"
 import { useState } from "react"
+import { useRouter } from "next/navigation"
 
 const monserrat = Montserrat({
     subsets: ["latin"],
@@ -57,6 +58,8 @@ export default function LiquidityPools() {
         }
     }
 
+    const router = useRouter()
+
     return (
         <div className={monserrat.className}>
             <div className="mt-10">
@@ -69,11 +72,14 @@ export default function LiquidityPools() {
                         type="text"
                         placeholder="search symbol..."
                         className="bg-transparent mt-2 outline-none focus:border focus:border-cyan-500 p-1 text-white w-36 border border-transparent border-b-white transition-colors duration-100"
+                        onChange={e => {
+                            setUserPoolsFilter(e.target.value)
+                        }}
                     />
                     {isConnected ? (
                         <>
                             {poolList ? (
-                                <PoolList poolList={contributedPools()} />
+                                <PoolList poolList={contributedPools()} text={userPoolsFilter} />
                             ) : (
                                 "Loading pools..."
                             )}
@@ -101,12 +107,19 @@ export default function LiquidityPools() {
                     {poolList ? (
                         <PoolList poolList={poolList} text={allPoolsFilter} />
                     ) : (
-                        "Loading pools..."
+                        <div className="flex justify-center max-h-64 items-center pt-5 mt-5 pb-6 animate-pulse">
+                            <p className="text-xl text-cyan-500 ">Loading pools...</p>
+                        </div>
                     )}
                 </div>
                 <div className="flex flex-col place-items-center space-y-3 mt-12">
                     <h1 className="text-gray-400 text-lg">Want to start a liquidity pool?</h1>
-                    <button className="py-2 px-10 bg-cyan-500 text-slate-900 rounded-3xl">
+                    <button
+                        className="py-2 px-10 bg-cyan-500 text-slate-900 rounded-3xl hover:scale-105 transition duration-500 ease-out"
+                        onClick={() => {
+                            router.push("/pools/newpool")
+                        }}
+                    >
                         CREATE POOL
                     </button>
                 </div>

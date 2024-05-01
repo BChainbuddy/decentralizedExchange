@@ -215,7 +215,7 @@ export default function AddLiquidity({
                 onClick={handleClick}
                 disabled={inputAmount > 0 ? false : true}
             >
-                {Number(allowanceInput1) / 10 ** 18 >= inputAmount ||
+                {Number(allowanceInput1) / 10 ** 18 >= inputAmount &&
                 Number(allowanceInput2) / 10 ** 18 >= amountNeeded
                     ? "ADD LIQUIDITY"
                     : "APPROVE"}

@@ -61,7 +61,7 @@ export default function PoolList({ poolList, text }) {
         if (poolList) {
             filterPools(text)
         } else {
-            filterPools([])
+            setFilteredPools([])
         }
     }, [text])
 

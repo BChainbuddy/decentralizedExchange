@@ -1,10 +1,10 @@
 "use client"
 
 import { Montserrat } from "next/font/google"
-import { useState, useEffect } from "react"
+import { useEffect } from "react"
 import ABI from "../../../constants/LiquidityPoolAbi.json"
 import ERC20ABI from "../../../constants/ERC20abi.json"
-import { useAccount, useReadContract } from "wagmi"
+import { useReadContract } from "wagmi"
 import StatsDisplay from "@/components/StatsDisplay"
 import UserContributions from "@/components/UserContributions"
 
@@ -15,8 +15,6 @@ const monserrat = Montserrat({
 
 export default function PoolPage(props) {
     const liquidityPoolAddress = props.params.id
-
-    const { isConnected } = useAccount()
 
     // READ YIELD, LIQUIDITY, ASSETONEADDRESS, ASSETTWOADDRESS, ASSETONEPRICE
     const { data: rewards } = useReadContract({
