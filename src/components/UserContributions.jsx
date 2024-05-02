@@ -82,7 +82,7 @@ export default function UserContributions({
                                         onClick={() => {
                                             setDisplayModal(true)
                                         }}
-                                        className="block transition ease-in-out duration-500 border bg-cyan-500 rounded-xl p-2 text-white hover:scale-110 hover:bg-cyan-700 w-44"
+                                        className="block transition ease-in-out duration-500 border bg-cyan-500 rounded-xl p-2 text-white hover:scale-105 hover:bg-cyan-700 w-44"
                                     >
                                         Add liquidity
                                     </button>
@@ -90,7 +90,7 @@ export default function UserContributions({
                                         onClick={() => {
                                             setDisplayModal2(true)
                                         }}
-                                        className="block transition ease-in-out duration-500 border bg-cyan-500 rounded-xl p-2 text-white hover:scale-110 hover:bg-cyan-700 w-44"
+                                        className="block transition ease-in-out duration-500 border bg-cyan-500 rounded-xl p-2 text-white hover:scale-105 hover:bg-cyan-700 w-44"
                                     >
                                         Remove liquidity
                                     </button>
@@ -139,7 +139,7 @@ export default function UserContributions({
                                     onClick={() => {
                                         setDisplayModal3(true)
                                     }}
-                                    className="transition ease-in-out duration-500 border bg-cyan-500 rounded-xl p-2 text-white hover:scale-110 hover:bg-cyan-700 w-44"
+                                    className="transition ease-in-out duration-500 border bg-cyan-500 rounded-xl p-2 text-white hover:scale-105 hover:bg-cyan-700 w-44"
                                 >
                                     Get yield
                                 </button>
@@ -148,7 +148,7 @@ export default function UserContributions({
                     </>
                 ) : (
                     <div>
-                        <button className="text-xl">Connect to wallet</button>
+                        <p className="text-xl text-cyan-500">Connect to wallet</p>
                     </div>
                 )}
             </section>

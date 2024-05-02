@@ -56,3 +56,114 @@
     scrollbar-width: thin;
     scrollbar-color: lightblue black;
 }
+
+.Popup {
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    width: 300px;
+    height: 100px;
+    overflow: hidden;
+}
+
+.animatePopup {
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    width: 150px;
+    height: 50px;
+    overflow: hidden;
+    opacity: 0;
+    transform: translateX(50px);
+    animation: appearPopup 8s ease;
+    background: white;
+    color: #203354;
+}
+
+@keyframes appearPopup {
+    0% {
+        opacity: 0;
+        transform: translateX(50px);
+    }
+    10% {
+        opacity: 1;
+        transform: translateX(0px);
+    }
+    20% {
+        background-position: 100% 0;
+        background-size: 200% 100%;
+    }
+    80% {
+        background-position: 0 0;
+    }
+    90% {
+        opacity: 1;
+        transform: translateX(0px);
+    }
+    100% {
+        opacity: 0;
+        transform: translateX(50px);
+        background-position: 0 0;
+    }
+}
+
+.animatePopUpStyle {
+    position: fixed;
+    top: 15px;
+    right: 15px;
+    width: 210px;
+    height: 50px;
+    border-radius: 20px;
+    background: white;
+    color: #203354;
+}
+
+.animatePopUpStyleBg {
+    position: fixed;
+    top: 10px;
+    right: 110px;
+    width: 260px;
+    height: 60px;
+    border-radius: 20px;
+    background: white;
+    color: #203354;
+}
+
+.outer {
+    position: fixed;
+    top: 15px;
+    right: 15px;
+    width: 185px;
+    height: 65px;
+    border-radius: 20px;
+    opacity: 0;
+    transform: translateX(50px);
+    color: #203354;
+    display: flex; /* Makes .outer a flex container */
+    justify-content: center; /* Centers horizontally */
+    align-items: center; /* Centers vertically */
+    background-image: linear-gradient(to left, transparent, transparent 50%, #06b6d4 50%, #06b6d4);
+    background-position: 100% 0;
+    background-size: 200% 100%;
+    animation: appearPopup 10s linear;
+}
+
+.inner {
+    width: 180px;
+    height: 60px;
+    border-radius: 19px;
+    background: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+@keyframes fillBorder {
+    90% {
+        background-position: 0 0;
+    }
+    100% {
+        background-position: 0 0;
+    }
+}

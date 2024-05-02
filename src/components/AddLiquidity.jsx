@@ -4,6 +4,8 @@ import { ethers } from "ethers"
 import ERC20ABI from "../constants/ERC20abi.json"
 import { useAccount, useReadContract, useWriteContract } from "wagmi"
 import ABI from "../constants/LiquidityPoolAbi.json"
+import CircleLoading from "@/ui/circleLoading"
+import TxPopup from "./TxPopup"
 
 export default function AddLiquidity({
     displayModal,
@@ -36,23 +38,24 @@ export default function AddLiquidity({
     })
 
     const {
-        status: statusToken1,
+        status: statusApprove1,
+        data: hashApprove1,
         writeContract: approveToken1,
-        isPending: pendingApproval1,
-        error: inputError1
+        isPending: pendingApproval1
     } = useWriteContract()
 
     const {
-        status: statusToken2,
+        status: statusApprove2,
+        data: hashApprove2,
         writeContract: approveToken2,
-        isPending: pendingApproval2,
-        error: inputError2
+        isPending: pendingApproval2
     } = useWriteContract()
 
     const {
         status: addLiquidityStatus,
+        data: addLiquidityHash,
         writeContract: addLiquidityFunc,
-        isPending: addLiquidityLoading
+        isPending: pendingAddLiquidity
     } = useWriteContract()
 
     const { data: amountNeeded } = useReadContract({
@@ -135,95 +138,112 @@ export default function AddLiquidity({
     }, [addressOne])
 
     return (
-        <Modal
-            isVisible={displayModal}
-            onClose={() => {
-                closeModal(false)
-                setInputAmount(0)
-                setSymbolOneAddLiquidity(symbolOne)
-                setSymbolTwoAddLiquidity(symbolTwo)
-            }}
-        >
-            <p className="text-center text-white text-2xl">
-                INVEST INTO
-                <span className="text-cyan-300 mr-1 ml-1">
-                    {symbolOne && symbolTwo ? `${symbolOne}/${symbolTwo}` : "Loading..."}
-                </span>
-                LIQUIDITY POOL
-            </p>
-            <div className="mx-auto mt-10">
-                <p className="text-white text-lg">Input base token</p>
-                <div className="flex flex-row space-x-2">
-                    <input
-                        onChange={e => {
-                            if (e.target.value > 0) {
-                                setInputAmount(e.target.value)
-                            } else {
-                                setInputAmount(0)
-                            }
-                        }}
-                        placeholder="0.00"
-                        type="number"
-                        min="0"
-                        step="0.1"
-                        className="pl-1 rounded"
-                    />
-                    <p className="text-white text-xl w-12 text-center">{symbolOneAddLiquidity}</p>
-                </div>
-            </div>
-            <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                strokeWidth="1.5"
-                stroke="#FFFFFF"
-                className="w-6 h-6 mx-auto mt-3 cursor-pointer"
-                onClick={() => {
-                    switchStats()
+        <>
+            <Modal
+                isVisible={displayModal}
+                onClose={() => {
+                    closeModal(false)
+                    setInputAmount(0)
+                    setSymbolOneAddLiquidity(symbolOne)
+                    setSymbolTwoAddLiquidity(symbolTwo)
                 }}
             >
-                <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M3 7.5L7.5 3m0 0L12 7.5M7.5 3v13.5m13.5 0L16.5 21m0 0L12 16.5m4.5 4.5V7.5"
-                />
-            </svg>
-            <div className="mx-auto mt-3">
-                <p className="text-white text-lg">Tokens needed</p>
-                <div className="flex flex-row space-x-2">
-                    <input
-                        placeholder={
-                            inputAmount && amountNeeded > 0
-                                ? Number(amountNeeded) / 10 ** 18
-                                : "0.00"
-                        }
-                        min="0"
-                        disabled
-                        className={`pl-1 rounded bg-white ${
-                            inputAmount ? "placeholder:text-gray-600" : ""
-                        }`}
-                    ></input>
-                    <p className="text-white text-xl w-12 text-center">{symbolTwoAddLiquidity}</p>
+                <p className="text-center text-white text-2xl">
+                    INVEST INTO
+                    <span className="text-cyan-300 mr-1 ml-1">
+                        {symbolOne && symbolTwo ? `${symbolOne}/${symbolTwo}` : "Loading..."}
+                    </span>
+                    LIQUIDITY POOL
+                </p>
+                <div className="mx-auto mt-10">
+                    <p className="text-white text-lg">Input base token</p>
+                    <div className="flex flex-row space-x-2">
+                        <input
+                            onChange={e => {
+                                if (e.target.value > 0) {
+                                    setInputAmount(e.target.value)
+                                } else {
+                                    setInputAmount(0)
+                                }
+                            }}
+                            placeholder="0"
+                            type="number"
+                            min="0"
+                            step="0.1"
+                            className="pl-1 rounded"
+                        />
+                        <p className="text-white text-xl w-12 text-center">
+                            {symbolOneAddLiquidity}
+                        </p>
+                    </div>
                 </div>
-            </div>
-            <button
-                className={`${
-                    inputAmount > 0
-                        ? "transition ease-in-out duration-500 hover:scale-110 hover:bg-cyan-700 bg-cyan-500"
-                        : "bg-cyan-500/20"
-                } mt-6 mx-auto border  rounded-xl p-2 text-white`}
-                onClick={handleClick}
-                disabled={inputAmount > 0 ? false : true}
-            >
-                {Number(allowanceInput1) / 10 ** 18 >= inputAmount &&
-                Number(allowanceInput2) / 10 ** 18 >= amountNeeded
-                    ? "ADD LIQUIDITY"
-                    : "APPROVE"}
-            </button>
-            <p className="text-center mt-7 text-white text-lg">
-                Invest to start earning <span className="text-cyan-300">rewards</span> from the
-                pool TODAY!
-            </p>
-        </Modal>
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    strokeWidth="1.5"
+                    stroke="#FFFFFF"
+                    className="w-6 h-6 mx-auto mt-3 cursor-pointer"
+                    onClick={() => {
+                        switchStats()
+                    }}
+                >
+                    <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M3 7.5L7.5 3m0 0L12 7.5M7.5 3v13.5m13.5 0L16.5 21m0 0L12 16.5m4.5 4.5V7.5"
+                    />
+                </svg>
+                <div className="mx-auto mt-3">
+                    <p className="text-white text-lg">Tokens needed</p>
+                    <div className="flex flex-row space-x-2">
+                        <input
+                            placeholder={
+                                inputAmount && amountNeeded > 0
+                                    ? Number(amountNeeded) / 10 ** 18
+                                    : "0"
+                            }
+                            min="0"
+                            disabled
+                            className={`pl-1 rounded bg-white ${
+                                inputAmount ? "placeholder:text-gray-600" : ""
+                            }`}
+                        ></input>
+                        <p className="text-white text-xl w-12 text-center">
+                            {symbolTwoAddLiquidity}
+                        </p>
+                    </div>
+                </div>
+                <button
+                    className={`${
+                        inputAmount > 0
+                            ? "transition ease-in-out duration-500 hover:bg-cyan-700 bg-cyan-500"
+                            : "bg-cyan-500/20"
+                    } mt-6 mx-auto border  rounded-xl p-2 text-white w-36 h-11`}
+                    onClick={handleClick}
+                    disabled={inputAmount > 0 ? false : true}
+                >
+                    {pendingApproval1 || pendingApproval2 || pendingAddLiquidity ? (
+                        <div className="flex justify-center items-center h-6 w-full">
+                            <CircleLoading />
+                        </div>
+                    ) : (
+                        <>
+                            {Number(allowanceInput1) / 10 ** 18 >= inputAmount &&
+                            Number(allowanceInput2) / 10 ** 18 >= Number(amountNeeded) / 10 ** 18
+                                ? "ADD LIQUIDITY"
+                                : "APPROVE"}
+                        </>
+                    )}
+                </button>
+                <p className="text-center mt-7 text-white text-lg">
+                    Invest to start earning <span className="text-cyan-300">rewards</span> from the
+                    pool TODAY!
+                </p>
+            </Modal>
+            <TxPopup hash={addLiquidityHash} status={addLiquidityStatus} />
+            <TxPopup hash={hashApprove1} status={statusApprove1} />
+            <TxPopup hash={hashApprove2} status={statusApprove2} />
+        </>
     )
 }

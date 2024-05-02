@@ -6,7 +6,7 @@ import POOLTRACKER_ABI from "../../constants/PoolTrackerAbi.json"
 import POOLTRACKER_ADDRESS from "../../constants/PoolTrackerAddress.json"
 import PoolList from "@/components/PoolList"
 import ABI from "../../constants/LiquidityPoolAbi.json"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 
 const monserrat = Montserrat({
@@ -19,6 +19,8 @@ export default function LiquidityPools() {
 
     const [userPoolsFilter, setUserPoolsFilter] = useState("")
     const [allPoolsFilter, setAllPoolsFilter] = useState("")
+
+    const [userPools, setUserPools] = useState("")
 
     const { data: poolList } = useReadContract({
         abi: POOLTRACKER_ABI,
@@ -60,6 +62,12 @@ export default function LiquidityPools() {
 
     const router = useRouter()
 
+    useEffect(() => {
+        if (userContributions) {
+            setUserPools(contributedPools())
+        }
+    }, [userContributions])
+
     return (
         <div className={monserrat.className}>
             <div className="mt-10">
@@ -78,8 +86,8 @@ export default function LiquidityPools() {
                     />
                     {isConnected ? (
                         <>
-                            {poolList ? (
-                                <PoolList poolList={contributedPools()} text={userPoolsFilter} />
+                            {userPools ? (
+                                <PoolList poolList={userPools} text={userPoolsFilter} />
                             ) : (
                                 "Loading pools..."
                             )}

@@ -44,7 +44,7 @@ export default function TokenInput({
                     }}
                 />
                 <button
-                    className="transition-all ease-in-out duration-300 border-2 rounded-r-md px-3 hover:bg-zinc-300 hover:text-gray-600"
+                    className="transition-all ease-in-out duration-300 border-2 rounded-r-md px-3 hover:bg-zinc-300 hover:text-gray-600 w-[105px]"
                     onClick={openModal}
                 >
                     {chosenTokenInput.symbol.length > 6

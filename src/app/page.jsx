@@ -3,9 +3,7 @@
 import Image from "next/image"
 import { Montserrat } from "next/font/google"
 import { useEffect, useState } from "react"
-import { useAccount, http, createConfig, useReadContract, useReadContracts } from "wagmi"
-import { mainnet, sepolia } from "wagmi/chains"
-
+import { useReadContract, useReadContracts } from "wagmi"
 import POOLTRACKER_ABI from "../constants/PoolTrackerAbi.json"
 import POOLTRACKER_ADDRESS from "../constants/PoolTrackerAddress.json"
 import ERC20ABI from "../constants/ERC20abi.json"

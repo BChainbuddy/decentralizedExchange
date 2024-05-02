@@ -124,10 +124,11 @@ export default function PoolPage(props) {
                                 symbolTwo === "Loading..." ? "animate-pulse" : "animate-none"
                             } text-3xl text-cyan-500`}
                         >
-                            {symbolOne ? symbolOne : "Loading..."}/
-                            {symbolTwo ? symbolOne : "Loading..."}
+                            {symbolOne && symbolTwo ? `${symbolOne}/${symbolTwo}` : "Loading..."}
                         </p>
-                        <p className="text-lg mt-2">{(Number(getPrice) / 10 ** 18).toFixed(2)}</p>
+                        <p className="text-lg mt-2">
+                            {getPrice ? (Number(getPrice) / 10 ** 18).toFixed(2) : "0.00"}
+                        </p>
                     </div>
                     <StatsDisplay
                         src={"http://www.w3.org/2000/svg"}

@@ -9,13 +9,15 @@ import { useState, useEffect } from "react"
 import Moralis from "moralis"
 import TokenInput from "@/components/TokenInput"
 import { ethers } from "ethers"
+import CircleLoading from "@/ui/circleLoading"
+import DeployPool from "@/components/DeployPool"
 
 const monserrat = Montserrat({
     subsets: ["latin"],
     weight: ["400"]
 })
 
-export default function DeployPool() {
+export default function NewPool() {
     const [chosenToken1, setChosenToken1] = useState({ symbol: "Symbol" })
     const [chosenToken2, setChosenToken2] = useState({ symbol: "Symbol" })
     const [amountToken1, setAmountToken1] = useState(0)
@@ -24,15 +26,6 @@ export default function DeployPool() {
     const [tokenList, setTokenList] = useState([])
 
     const { address, isConnected, chainId } = useAccount()
-
-    const { writeContract: deployPool } = useWriteContract()
-
-    const { data: exists } = useReadContract({
-        address: POOLTRACKER_ADDRESS["11155111"],
-        abi: POOLTRACKER_ABI,
-        functionName: "exists",
-        args: [chosenToken1.address, chosenToken2.address]
-    })
 
     const getUserTokens = async () => {
         await Moralis.start({
@@ -57,97 +50,6 @@ export default function DeployPool() {
         })
         if (list) {
             setTokenList(list)
-        }
-    }
-
-    const { data: allowanceToken1 } = useReadContract({
-        abi: ERC20ABI,
-        address: chosenToken1.address,
-        functionName: "allowance",
-        args: [address, POOLTRACKER_ADDRESS["11155111"]]
-    })
-
-    const { data: allowanceToken2 } = useReadContract({
-        abi: ERC20ABI,
-        address: chosenToken2.address,
-        functionName: "allowance",
-        args: [address, POOLTRACKER_ADDRESS["11155111"]]
-    })
-
-    const {
-        status: approveToken1Status,
-        writeContract: approveToken1,
-        isPending: pendingApproval1,
-        error: inputError1
-    } = useWriteContract()
-
-    const {
-        status: approveToken2Status,
-        writeContract: approveToken2,
-        isPending: pendingApproval2,
-        error: inputError2
-    } = useWriteContract()
-
-    const handleClick = () => {
-        console.log(allowanceToken1)
-        console.log(allowanceToken2)
-        console.log(amountToken1)
-        console.log(amountToken2)
-        if (
-            Number(allowanceToken1) / 10 ** 18 < amountToken1 ||
-            Number(allowanceToken2) / 10 ** 18 < amountToken2
-        ) {
-            console.log("Approving...")
-            approveToken()
-            return
-        }
-        handleDeploy()
-    }
-
-    const approveToken = () => {
-        try {
-            if (Number(allowanceToken1) / 10 ** 18 < amountToken1) {
-                approveToken1({
-                    abi: ERC20ABI,
-                    address: chosenToken1.address,
-                    functionName: "approve",
-                    args: [
-                        POOLTRACKER_ADDRESS["11155111"],
-                        ethers.parseEther((amountToken1 * 2).toString())
-                    ]
-                })
-            }
-            if (Number(allowanceToken2) / 10 ** 18 < amountToken2) {
-                approveToken2({
-                    abi: ERC20ABI,
-                    address: chosenToken2.address,
-                    functionName: "approve",
-                    args: [
-                        POOLTRACKER_ADDRESS["11155111"],
-                        ethers.parseEther((amountToken2 * 2).toString())
-                    ]
-                })
-            }
-        } catch (error) {
-            console.log(error)
-        }
-    }
-
-    const handleDeploy = () => {
-        try {
-            deployPool({
-                address: POOLTRACKER_ADDRESS["11155111"],
-                abi: POOLTRACKER_ABI,
-                functionName: "createPool",
-                args: [
-                    chosenToken1.address,
-                    chosenToken2.address,
-                    ethers.parseEther(amountToken1.toString()),
-                    ethers.parseEther(amountToken2.toString())
-                ]
-            })
-        } catch (error) {
-            console.log(error)
         }
     }
 
@@ -189,42 +91,12 @@ export default function DeployPool() {
                             setChosenTokenInput={setChosenToken2}
                         />
                     </div>
-                    <div className="flex flex-row items-center mt-6">
-                        <div
-                            className={`rounded-full h-4 w-4 transition duration-300 ${
-                                !chosenToken1.address || !chosenToken2.address
-                                    ? "bg-white"
-                                    : exists
-                                    ? "bg-red-500"
-                                    : "bg-green-500"
-                            }`}
-                        ></div>
-                        <p
-                            className={`ml-1 transition duration-300 ${
-                                !chosenToken1.address || !chosenToken2.address
-                                    ? "text-white"
-                                    : exists
-                                    ? "text-red-500"
-                                    : "text-green-500"
-                            }`}
-                        >
-                            Is available
-                        </p>
-                    </div>
-                    <button
-                        className={`py-1 px-6 rounded-2xl text-black mt-6 text-lg transition-all duration-500 ease-out ${
-                            exists || !chosenToken1.address || !chosenToken2.address
-                                ? "bg-cyan-800"
-                                : "bg-cyan-500 hover:scale-105"
-                        }`}
-                        disabled={exists || !chosenToken1.address || !chosenToken2.address}
-                        onClick={handleClick}
-                    >
-                        {Number(allowanceToken1) / 10 ** 18 >= amountToken1 &&
-                        Number(allowanceToken2) / 10 ** 18 >= amountToken2
-                            ? "DEPLOY"
-                            : "APPROVE"}
-                    </button>
+                    <DeployPool
+                        amountToken1={amountToken1}
+                        amountToken2={amountToken2}
+                        chosenToken1={chosenToken1}
+                        chosenToken2={chosenToken2}
+                    />
                 </>
             ) : (
                 <div className="mt-20">
