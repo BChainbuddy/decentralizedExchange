@@ -1,24 +1,21 @@
-import { Inter } from "next/font/google"
 import "./globals.css"
-import Providers from "./providers"
-import { Header } from "@/components/Header"
-
-// const inter = Inter({ subsets: ["latin"] });
-// ${inter.className}
+import { Montserrat } from "next/font/google"
 
 export const metadata = {
     title: "SEA SWAP",
     description: "Decentralized exchange"
 }
 
-export default function RootLayout({ children }) {
+const monserrat = Montserrat({
+    subsets: ["latin"],
+    weight: ["400"]
+})
+
+export default function DexLayout({ children }) {
     return (
         <html lang="en">
-            <body className={`bg-slate-900 p-16`}>
-                <Providers>
-                    <Header />
-                    {children}
-                </Providers>
+            <body className={`${monserrat.className} overflow-x-hidden bg-slate-900`}>
+                {children}
             </body>
         </html>
     )

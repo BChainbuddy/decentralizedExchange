@@ -1,4 +1,4 @@
-"use client" // This is a client components
+"use client" 
 
 import { useEffect, useState } from "react"
 import { useAccount, useConnect, useDisconnect } from "wagmi"
@@ -74,8 +74,7 @@ export default function ConnectButton() {
                     onMouseEnter={toggleWords}
                     onMouseLeave={toggleWords}
                 >
-                    <span className={isActive ? "" : "hidden"}>{account}</span>
-                    <span className={isActive ? "hidden" : ""}>DISCONNECT</span>
+                    {isActive ? { account } : "DISCONNECT"}
                 </button>
             ) : (
                 <Link href="https://metamask.io/download/" target="_blank">

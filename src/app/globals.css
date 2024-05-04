@@ -57,78 +57,6 @@
     scrollbar-color: lightblue black;
 }
 
-.Popup {
-    position: fixed;
-    top: 10px;
-    right: 10px;
-    width: 300px;
-    height: 100px;
-    overflow: hidden;
-}
-
-.animatePopup {
-    position: fixed;
-    top: 10px;
-    right: 10px;
-    width: 150px;
-    height: 50px;
-    overflow: hidden;
-    opacity: 0;
-    transform: translateX(50px);
-    animation: appearPopup 8s ease;
-    background: white;
-    color: #203354;
-}
-
-@keyframes appearPopup {
-    0% {
-        opacity: 0;
-        transform: translateX(50px);
-    }
-    10% {
-        opacity: 1;
-        transform: translateX(0px);
-    }
-    20% {
-        background-position: 100% 0;
-        background-size: 200% 100%;
-    }
-    80% {
-        background-position: 0 0;
-    }
-    90% {
-        opacity: 1;
-        transform: translateX(0px);
-    }
-    100% {
-        opacity: 0;
-        transform: translateX(50px);
-        background-position: 0 0;
-    }
-}
-
-.animatePopUpStyle {
-    position: fixed;
-    top: 15px;
-    right: 15px;
-    width: 210px;
-    height: 50px;
-    border-radius: 20px;
-    background: white;
-    color: #203354;
-}
-
-.animatePopUpStyleBg {
-    position: fixed;
-    top: 10px;
-    right: 110px;
-    width: 260px;
-    height: 60px;
-    border-radius: 20px;
-    background: white;
-    color: #203354;
-}
-
 .outer {
     position: fixed;
     top: 15px;
@@ -166,4 +94,103 @@
     100% {
         background-position: 0 0;
     }
+}
+
+.backgroundImage {
+    display: flex;
+    height: 100vh;
+    position: relative;
+    width: 100vw;
+    justify-content: center;
+    align-items: center;
+}
+
+.backgroundImage .logoContainer {
+    position: relative;
+    z-index: 11;
+    color: white;
+    text-align: center;
+}
+
+.backgroundImage img {
+    position: absolute;
+    z-index: 10;
+}
+
+.backgroundImage .logoContainer .logo {
+    font-size: 65px;
+    text-shadow: #fc0 1px 0 10px;
+}
+
+.backgroundImage .logoContainer .text {
+    margin-top: 2px;
+    font-size: 25px;
+    text-shadow: #fc0 1px 0 10px;
+    width: 300px;
+    margin: 0 auto;
+    opacity: 0;
+    animation: showLogoText 8s forwards ease-in 2s;
+}
+
+.logo1 {
+    opacity: 0;
+    animation: showLogo1 8s forwards ease-in 2s;
+}
+
+.logo2 {
+    opacity: 0;
+    animation: showLogo2 8s forwards ease-in 2s;
+}
+
+@keyframes showLogo1 {
+    33% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 1;
+    }
+}
+
+@keyframes showLogo2 {
+    34% {
+        opacity: 0;
+    }
+
+    66% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 1;
+    }
+}
+
+@keyframes showLogoText {
+    67% {
+        opacity: 0;
+    }
+
+    90% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+.contentBox {
+    box-shadow: #fc0 1px 0 10px;
+    background: #ffcc00;
+}
+
+.textYellowShadow {
+    text-shadow: #fc0 1px 0 4px;
+    /* color: #fc0; */
+}
+
+#Services button:hover {
+    background: #fc0;
+    box-shadow: #fc0 1px 0 8px;
+    border: #fc0 1px solid;
 }
