@@ -49,7 +49,9 @@ export default function UserContributions({
                                         symbolTwo === "Loading..." ? "hidden" : ""
                                     } text-base`}
                                 >
-                                    {Math.floor(Number(userLpTokens) / 10 ** 36)}
+                                    {userLpTokens
+                                        ? Math.floor(Number(userLpTokens)) / 10 ** 36
+                                        : "0"}
                                 </p>
                             </div>
                             <div className="flex justify-center w-1/2">

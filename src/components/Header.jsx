@@ -18,9 +18,9 @@ export function Header() {
             <div className="flex flex-row">
                 <Link
                     href={pathname === "/dex" ? "/pools" : "/dex"}
-                    className="button text-gray-400 mr-10 border rounded-md p-3 hover:bg-zinc-300"
+                    className="button text-gray-400 mr-10 border rounded-md p-3 hover:bg-zinc-300 text-center"
                 >
-                    {pathname === "/" ? "POOLS" : "EXCHANGE"}
+                    {pathname === "/dex" ? "LIQUIDITY POOLS" : "EXCHANGE"}
                 </Link>
                 <ConnectButton />
             </div>

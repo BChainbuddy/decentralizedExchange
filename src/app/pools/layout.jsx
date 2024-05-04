@@ -9,13 +9,11 @@ export const metadata = {
 
 export default function PoolsLayout({ children }) {
     return (
-        <html lang="en">
-            <body className={`bg-slate-900 p-16`}>
-                <Providers>
-                    <Header />
-                    {children}
-                </Providers>
-            </body>
-        </html>
+        <div className="bg-slate-900 p-16">
+            <Providers>
+                <Header />
+                {children}
+            </Providers>
+        </div>
     )
 }

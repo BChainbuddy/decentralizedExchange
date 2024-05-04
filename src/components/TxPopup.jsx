@@ -1,7 +1,6 @@
 "use client"
 
 import { useAccount } from "wagmi"
-import { useState, useEffect } from "react"
 
 export default function TxPopup({ hash, status }) {
     const { chainId } = useAccount()
@@ -15,21 +14,6 @@ export default function TxPopup({ hash, status }) {
         const etherscan = networkMap[chainId]
         return `${etherscan}${hash}`
     }
-
-    useEffect(() => {
-        console.log(status)
-        console.log(hash)
-
-        const etherscan = networkMap[chainId]
-        console.log(etherscan)
-        console.log(`${etherscan}${hash}`)
-        if (status === "success") {
-            console.log("Popup worked!")
-        }
-        if (status === "error") {
-            console.log("Popup error worked!")
-        }
-    }, [status])
 
     return (
         <>

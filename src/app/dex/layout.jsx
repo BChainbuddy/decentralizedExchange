@@ -9,13 +9,11 @@ export const metadata = {
 
 export default function DexLayout({ children }) {
     return (
-        <html lang="en">
-            <body className={`bg-slate-900 p-16`}>
-                <Providers>
-                    <Header />
-                    {children}
-                </Providers>
-            </body>
-        </html>
+        <Providers>
+            <div className={`bg-slate-900 p-16 flex flex-col`}>
+                <Header />
+                {children}
+            </div>
+        </Providers>
     )
 }

@@ -39,7 +39,6 @@ export default function ClaimRewards({ closeModal, displayModal, poolAddress }) 
         // console.log("TimeLock is not on")
     }
 
-    // Calls a smart contract function get yield, called in get yield modal
     const handleClaimRewards = async () => {
         claimRewards({
             address: poolAddress,

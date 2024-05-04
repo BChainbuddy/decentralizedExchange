@@ -6,8 +6,7 @@ import SWAPROUTER_ABI from "../constants/DexAbi.json"
 import { ethers } from "ethers"
 import ERC20ABI from "../constants/ERC20abi.json"
 import CircleLoading from "@/ui/circleLoading"
-import TxPopup from "./TxPopUp"
-import { useEffect } from "react"
+import TxPopup from "./TxPopup"
 
 export default function DexSwap({ chosenTokenInput, chosenTokenOutput, inputAmount }) {
     const { address, chainId } = useAccount()

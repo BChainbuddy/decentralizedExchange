@@ -6,7 +6,6 @@ import CircleLoading from "@/ui/circleLoading"
 import TxPopup from "./TxPopup"
 
 export default function RemoveLiquidity({ closeModal, displayModal, poolAddress }) {
-    // Calls a smart contract function to remove liquidity from the pool, called in remove liquidity modal
     const [percent, setPercent] = useState(0)
 
     const { status, data, writeContract: removeLiquidity, isPending } = useWriteContract()

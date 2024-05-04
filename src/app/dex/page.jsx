@@ -51,46 +51,44 @@ export default function Dex() {
     }, [tokenSymbols])
 
     return (
-        <div className={monserrat.className}>
-            <main className="flex justify-center">
-                <div className="shadow-cyan-500 w-[450px] space-y-1 mt-16 py-10 text-gray-400 p-10 text-center flex flex-col rounded-xl shadow-2xl transition duration-200">
-                    <p className="text-2xl mb-4">Exchange Tokens</p>
-                    <div className="flex flex-col">
-                        <p className="ml-2 text-left">Input</p>
-                        <DexInput
-                            chosenTokenInput={chosenTokenInput}
-                            setChosenTokenInput={setChosenTokenInput}
-                            tokenList={tokenList}
-                            setInputAmount={setInputAmount}
-                            inputAmount={inputAmount}
-                        />
-                    </div>
-                    <div className="flex justify-center">
-                        <Image
-                            src="/arrowDownLong.svg"
-                            alt="arrow"
-                            width={40}
-                            height={40}
-                            className="mt-3"
-                        ></Image>
-                    </div>
-                    <div>
-                        <p className="ml-2 text-left">Output</p>
-                        <DexOutput
-                            chosenTokenInput={chosenTokenInput}
-                            tokenList={tokenList}
-                            inputAmount={inputAmount}
-                            chosenTokenOutput={chosenTokenOutput}
-                            setChosenTokenOutput={setChosenTokenOutput}
-                        />
-                    </div>
-                    <DexSwap
+        <main className={`${monserrat.className} flex-1 flex justify-center items-center`}>
+            <div className="shadow-cyan-500 w-[450px] space-y-1 mt-16 py-10 text-gray-400 p-10 text-center flex flex-col rounded-xl shadow-2xl transition duration-200 mb-8">
+                <p className="text-2xl mb-4">Exchange Tokens</p>
+                <div className="flex flex-col">
+                    <p className="ml-2 text-left">Input</p>
+                    <DexInput
                         chosenTokenInput={chosenTokenInput}
-                        chosenTokenOutput={chosenTokenOutput}
+                        setChosenTokenInput={setChosenTokenInput}
+                        tokenList={tokenList}
+                        setInputAmount={setInputAmount}
                         inputAmount={inputAmount}
                     />
                 </div>
-            </main>
-        </div>
+                <div className="flex justify-center">
+                    <Image
+                        src="/arrowDownLong.svg"
+                        alt="arrow"
+                        width={40}
+                        height={40}
+                        className="mt-3"
+                    ></Image>
+                </div>
+                <div>
+                    <p className="ml-2 text-left">Output</p>
+                    <DexOutput
+                        chosenTokenInput={chosenTokenInput}
+                        tokenList={tokenList}
+                        inputAmount={inputAmount}
+                        chosenTokenOutput={chosenTokenOutput}
+                        setChosenTokenOutput={setChosenTokenOutput}
+                    />
+                </div>
+                <DexSwap
+                    chosenTokenInput={chosenTokenInput}
+                    chosenTokenOutput={chosenTokenOutput}
+                    inputAmount={inputAmount}
+                />
+            </div>
+        </main>
     )
 }

@@ -20,7 +20,7 @@ export default function ServiceButton({ name, path }) {
     return (
         <Link href={path}>
             <button
-                className={`block transition ease-in-out duration-1000 border bg-cyan-500 rounded-2xl p-3 text-white hover:scale-105 hover:bg-cyan-700 w-44 text-lg ${
+                className={`block transition ease-in-out duration-1000 border border-gray-400 bg-cyan-500 rounded-2xl p-3 text-white hover:scale-105 hover:bg-cyan-700 w-44 text-lg ${
                     show ? "scale-100 opacity-100" : "scale-0 opacity-0"
                 }`}
                 ref={ref}

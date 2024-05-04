@@ -11,7 +11,7 @@ const monserrat = Montserrat({
     weight: ["400"]
 })
 
-export default function DexLayout({ children }) {
+export default function Layout({ children }) {
     return (
         <html lang="en">
             <body className={`${monserrat.className} overflow-x-hidden bg-slate-900`}>

@@ -7,7 +7,7 @@ export default function HomePage() {
     return (
         <>
             <div className="backgroundImage">
-                <Image src="/background2.jpeg" layout="fill" />
+                <Image src="/background2.jpeg" alt="Seabottom" fill />
                 <div className="logoContainer">
                     <p className="logo">
                         <span className="logo1">SEA</span> <span className="logo2">SWAP</span>

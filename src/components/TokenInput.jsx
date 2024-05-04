@@ -14,8 +14,8 @@ export default function TokenInput({
     }
 
     function willChooseToken(symbol, address) {
-        console.log(`This is the chosen token symbol ${symbol}`)
-        console.log(`This is the chosen token address ${address}`)
+        // console.log(`This is the chosen token symbol ${symbol}`)
+        // console.log(`This is the chosen token address ${address}`)
         setChosenTokenInput({ address: address, symbol: symbol })
     }
 
