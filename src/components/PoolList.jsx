@@ -2,7 +2,7 @@ import { useReadContract, useReadContracts } from "wagmi"
 import Pool from "./Pool"
 import { useState, useEffect } from "react"
 import ABI from "../constants/LiquidityPoolAbi.json"
-import ERC20ABI from "../constants/ERC20abi.json"
+import ERC20ABI from "../constants/ERC20Abi.json"
 
 export default function PoolList({ poolList, text }) {
     const [seeAll, setSeeAll] = useState(false)

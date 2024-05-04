@@ -2,7 +2,7 @@ import { useEffect, useState } from "react"
 import Modal from "./Modal"
 import { useReadContract, useWriteContract, useAccount } from "wagmi"
 import ABI from "../constants/LiquidityPoolAbi.json"
-import CircleLoading from "@/ui/circleLoading"
+import CircleLoading from "@/ui/CircleLoading"
 import TxPopup from "./TxPopup"
 
 export default function ClaimRewards({ closeModal, displayModal, poolAddress }) {

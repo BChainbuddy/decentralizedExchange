@@ -4,8 +4,8 @@ import { useWriteContract, useReadContract, useAccount } from "wagmi"
 import SWAPROUTER_ADDRESS from "../constants/DexAddress.json"
 import SWAPROUTER_ABI from "../constants/DexAbi.json"
 import { ethers } from "ethers"
-import ERC20ABI from "../constants/ERC20abi.json"
-import CircleLoading from "@/ui/circleLoading"
+import ERC20ABI from "../constants/ERC20Abi.json"
+import CircleLoading from "@/ui/CircleLoading"
 import TxPopup from "./TxPopup"
 
 export default function DexSwap({ chosenTokenInput, chosenTokenOutput, inputAmount }) {
@@ -116,9 +116,7 @@ export default function DexSwap({ chosenTokenInput, chosenTokenOutput, inputAmou
                         </div>
                     ) : (
                         <>
-                            {Number(allowanceInput) / 10 ** 18 >= inputAmount
-                                ? "SWAP"
-                                : "APPROVE"}
+                            {Number(allowanceInput) / 10 ** 18 >= inputAmount ? "SWAP" : "APPROVE"}
                         </>
                     )}
                 </button>

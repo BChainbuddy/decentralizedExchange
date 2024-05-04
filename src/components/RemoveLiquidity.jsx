@@ -2,7 +2,7 @@ import { useState } from "react"
 import Modal from "./Modal"
 import { useWriteContract } from "wagmi"
 import ABI from "../constants/LiquidityPoolAbi.json"
-import CircleLoading from "@/ui/circleLoading"
+import CircleLoading from "@/ui/CircleLoading"
 import TxPopup from "./TxPopup"
 
 export default function RemoveLiquidity({ closeModal, displayModal, poolAddress }) {

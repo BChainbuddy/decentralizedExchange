@@ -1,6 +1,6 @@
 import { useReadContract } from "wagmi"
 import ABI from "../constants/LiquidityPoolAbi.json"
-import ERC20ABI from "../constants/ERC20abi.json"
+import ERC20ABI from "../constants/ERC20Abi.json"
 import { useRouter } from "next/navigation"
 export default function Pool({ pool }) {
     const { data: yielded } = useReadContract({

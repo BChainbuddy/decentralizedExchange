@@ -1,9 +1,9 @@
 import { useAccount, useReadContract, useWriteContract } from "wagmi"
 import POOLTRACKER_ABI from "../constants/PoolTrackerAbi.json"
 import POOLTRACKER_ADDRESS from "../constants/PoolTrackerAddress.json"
-import ERC20ABI from "../constants/ERC20abi.json"
+import ERC20ABI from "../constants/ERC20Abi.json"
 import { ethers } from "ethers"
-import CircleLoading from "@/ui/circleLoading"
+import CircleLoading from "@/ui/CircleLoading"
 import TxPopup from "./TxPopup"
 
 export default function DeployPool({ amountToken1, amountToken2, chosenToken1, chosenToken2 }) {
