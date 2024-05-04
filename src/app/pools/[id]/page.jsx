@@ -3,7 +3,7 @@
 import { Montserrat } from "next/font/google"
 import { useEffect } from "react"
 import ABI from "../../../constants/LiquidityPoolAbi.json"
-import ERC20ABI from "../../../constants/ERC20abi.json"
+import ERC20ABI from "../../../constants/ERC20Abi.json"
 import { useReadContract } from "wagmi"
 import StatsDisplay from "@/components/StatsDisplay"
 import UserContributions from "@/components/UserContributions"

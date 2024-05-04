@@ -1,15 +1,10 @@
 "use client"
 
 import { Montserrat } from "next/font/google"
-import { useAccount, useReadContract, useWriteContract } from "wagmi"
-import POOLTRACKER_ABI from "../../../constants/PoolTrackerAbi.json"
-import POOLTRACKER_ADDRESS from "../../../constants/PoolTrackerAddress.json"
-import ERC20ABI from "../../../constants/ERC20abi.json"
+import { useAccount } from "wagmi"
 import { useState, useEffect } from "react"
 import Moralis from "moralis"
 import TokenInput from "@/components/TokenInput"
-import { ethers } from "ethers"
-import CircleLoading from "@/ui/circleLoading"
 import DeployPool from "@/components/DeployPool"
 
 const monserrat = Montserrat({

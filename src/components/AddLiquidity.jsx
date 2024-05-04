@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react"
 import Modal from "./Modal"
 import { ethers } from "ethers"
-import ERC20ABI from "../constants/ERC20abi.json"
+import ERC20ABI from "../constants/ERC20Abi.json"
 import { useAccount, useReadContract, useWriteContract } from "wagmi"
 import ABI from "../constants/LiquidityPoolAbi.json"
-import CircleLoading from "@/ui/circleLoading"
+import CircleLoading from "@/ui/CircleLoading"
 import TxPopup from "./TxPopup"
 
 export default function AddLiquidity({
