@@ -1,5 +1,4 @@
 import "./../globals.css"
-import Providers from "./../providers"
 import { Header } from "@/components/Header"
 
 export const metadata = {
@@ -10,10 +9,8 @@ export const metadata = {
 export default function PoolsLayout({ children }) {
     return (
         <div className="bg-slate-900 p-16">
-            <Providers>
-                <Header />
-                {children}
-            </Providers>
+            <Header />
+            {children}
         </div>
     )
 }

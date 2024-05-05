@@ -23,28 +23,34 @@ export default function NewPool() {
     const { address, isConnected, chainId } = useAccount()
 
     const getUserTokens = async () => {
-        await Moralis.start({
-            apiKey: process.env.NEXT_PUBLIC_MORALIS
-        })
-
-        const chain = `0x${chainId.toString(16)}`
-
-        const response = await Moralis.EvmApi.token.getWalletTokenBalances({
-            chain,
-            address
-        })
-        const result = response.toJSON()
-        let list = result.map(token => {
-            return {
-                address: token.token_address,
-                symbol: token.symbol
+        try {
+            if (!Moralis.Core.isStarted) {
+                await Moralis.start({
+                    apiKey: process.env.NEXT_PUBLIC_MORALIS
+                })
             }
-        })
-        list = list.filter(token => {
-            return token.symbol
-        })
-        if (list) {
-            setTokenList(list)
+
+            const chain = `0x${chainId.toString(16)}`
+
+            const response = await Moralis.EvmApi.token.getWalletTokenBalances({
+                chain,
+                address
+            })
+            const result = response.toJSON()
+            let list = result.map(token => {
+                return {
+                    address: token.token_address,
+                    symbol: token.symbol
+                }
+            })
+            list = list.filter(token => {
+                return token.symbol
+            })
+            if (list) {
+                setTokenList(list)
+            }
+        } catch (err) {
+            console.log(err)
         }
     }
 

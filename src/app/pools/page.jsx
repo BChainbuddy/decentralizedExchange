@@ -89,7 +89,7 @@ export default function LiquidityPools() {
                             <PoolList poolList={userPools} text={userPoolsFilter} />
                         ) : (
                             <div className="flex justify-center max-h-64 items-center pt-5 mt-5 pb-6 animate-pulse">
-                                <p className="text-xl text-cyan-500">No pools found</p>
+                                <p className="text-xl text-cyan-500">Loading</p>
                             </div>
                         )}
                     </>

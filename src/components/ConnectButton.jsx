@@ -31,7 +31,7 @@ export default function ConnectButton() {
     const { disconnect } = useDisconnect()
 
     useEffect(() => {
-        if (!isConnected && metaMask === 0) {
+        if (!isConnected) {
             // If metamask can't be found
             if (typeof window.ethereum === "undefined") {
                 changeMetamask(2)

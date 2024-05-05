@@ -1,5 +1,4 @@
 import "./../globals.css"
-import Providers from "./../providers"
 import { Header } from "@/components/Header"
 
 export const metadata = {
@@ -9,11 +8,9 @@ export const metadata = {
 
 export default function DexLayout({ children }) {
     return (
-        <Providers>
-            <div className={`bg-slate-900 p-16 flex flex-col`}>
-                <Header />
-                {children}
-            </div>
-        </Providers>
+        <div className={`bg-slate-900 p-16 flex flex-col`}>
+            <Header />
+            {children}
+        </div>
     )
 }

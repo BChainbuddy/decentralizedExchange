@@ -68,6 +68,13 @@ export default function DeployPool({ amountToken1, amountToken2, chosenToken1, c
         handleDeploy()
     }
 
+    // State variable for toggle
+    // const [isActive, setActive] = useState(true)
+
+    // useEffect(() => {
+    //     setIsClient(true)
+    // }, [])
+
     const approveToken = () => {
         try {
             if (Number(allowanceToken1) / 10 ** 18 < amountToken1) {
