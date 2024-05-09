@@ -46,7 +46,7 @@ export default function Content({ img_src, headline, text, isOnLeft }) {
                         : "-translate-x-4 translate-y-4"
                 }`}
             >
-                <p className="text-center text-xl">{headline}</p>
+                <p className="text-center text-xl font-black rounded-lg">{headline}</p>
                 <p className="text-justify text-base mt-3">{text}</p>
             </div>
             {isOnLeft ? (

@@ -1,5 +1,6 @@
 import { useState } from "react"
 import TokenList from "./TokenList"
+import { shortenSymbol } from "@/utils/shortenSymbol"
 
 export default function TokenInput({
     chosenTokenInput,
@@ -17,11 +18,6 @@ export default function TokenInput({
         // console.log(`This is the chosen token symbol ${symbol}`)
         // console.log(`This is the chosen token address ${address}`)
         setChosenTokenInput({ address: address, symbol: symbol })
-    }
-
-    function shortenSymbol(longSymbol) {
-        const newSymbol = longSymbol.substring(0, 5).toString() + ".."
-        return newSymbol
     }
 
     return (
@@ -48,7 +44,7 @@ export default function TokenInput({
                     onClick={openModal}
                 >
                     {chosenTokenInput.symbol.length > 6
-                        ? shortenSymbol(chosenTokenInput.symbol)
+                        ? shortenSymbol(chosenTokenInput.symbol, 5)
                         : chosenTokenInput.symbol}
                 </button>
             </div>

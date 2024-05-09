@@ -71,13 +71,13 @@ export default function LiquidityPools() {
     return (
         <main className={`mt-10 ${monserrat.className} pb-16`}>
             <div className="flex flex-col place-items-center">
-                <h1 className="text-gray-400 text-2xl border-b pb-1 w-64 text-center">
+                <h1 className="text-white textShadow text-2xl border-b pb-1 w-64 text-center">
                     CONTRIBUTED TO
                 </h1>
                 <input
                     id="userPools"
                     type="text"
-                    placeholder="search symbol..."
+                    placeholder="Search symbol..."
                     className="bg-transparent mt-2 outline-none focus:border focus:border-cyan-500 p-1 text-white w-36 border border-transparent border-b-white transition-colors duration-100"
                     onChange={e => {
                         setUserPoolsFilter(e.target.value)
@@ -100,13 +100,13 @@ export default function LiquidityPools() {
                 )}
             </div>
             <div className="flex flex-col place-items-center mt-8">
-                <h1 className="text-gray-400 text-2xl border-b pb-1 w-80 text-center">
+                <h1 className="text-white textShadow text-2xl border-b pb-1 w-80 text-center">
                     TOP LIQUIDITY POOLS
                 </h1>
                 <input
                     id="allPools"
                     type="text"
-                    placeholder="search symbol..."
+                    placeholder={"Search symbol.."}
                     className="bg-transparent mt-2 outline-none focus:border focus:border-cyan-500 p-1 text-white w-36 border border-transparent border-b-white transition-colors duration-100"
                     onChange={e => {
                         setAllPoolsFilter(e.target.value)

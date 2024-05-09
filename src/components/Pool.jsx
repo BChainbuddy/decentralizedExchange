@@ -2,6 +2,7 @@ import { useReadContract } from "wagmi"
 import ABI from "../constants/LiquidityPoolAbi.json"
 import ERC20ABI from "../constants/ERC20Abi.json"
 import { useRouter } from "next/navigation"
+import { shortenSymbol } from "@/utils/shortenSymbol"
 export default function Pool({ pool }) {
     const { data: yielded } = useReadContract({
         abi: ABI,
@@ -47,38 +48,40 @@ export default function Pool({ pool }) {
 
     const router = useRouter()
 
-    function shortenSymbol(longSymbol) {
-        const newSymbol = longSymbol.substring(0, 5).toString() + ".."
-        return newSymbol
-    }
-
     return (
         <div
-            className="transition-all duration-500 border-2 text-gray-400 cursor-pointer text-center rounded-xl py-2 space-y-3 hover:shadow-lg hover:shadow-cyan-500 hover:text-cyan-500 hover:-translate-y-2 w-44 h-52"
+            className="transition-all duration-500 border-2 text-gray-400 cursor-pointer text-center rounded-xl py-2 space-y-3 hover:shadow-lg hover:shadow-cyan-500 hover:-translate-y-2 w-44 h-52 bg-slate-800"
             onClick={() => {
                 router.push(`/pools/${pool}`)
             }}
+            id="Pool"
         >
             {symbolOne && symbolTwo ? (
                 <>
                     <div className="mt-2">
-                        <p className="text-lg">
-                            {`${symbolOne.length > 6 ? shortenSymbol(symbolOne) : symbolOne}/${
-                                symbolTwo.length > 6 ? shortenSymbol(symbolTwo) : symbolTwo
+                        <p className="text-lg font-bold text-white poolAttributes">
+                            {`${symbolOne.length > 6 ? shortenSymbol(symbolOne, 5) : symbolOne}/${
+                                symbolTwo.length > 6 ? shortenSymbol(symbolTwo, 5) : symbolTwo
                             }`}
                         </p>
-                        <p className="text-sm mt-2">
+                        <p className="text-sm mt-2 poolAttributes">
                             price:{" "}
                             <span>{(Number(getPrice) / 10 ** 18).toFixed(2).toString()}</span>
                         </p>
                     </div>
                     <div>
-                        <p className="text-base">YIELD GIVEN</p>
-                        <p>{yielded ? (Number(yielded) / 10 ** 18).toString() : "0"}</p>
+                        <p className="text-base font-bold text-white poolAttributes">
+                            YIELD GIVEN
+                        </p>
+                        <p className="poolAttributes">
+                            {yielded ? (Number(yielded) / 10 ** 18).toString() : "0"}
+                        </p>
                     </div>
                     <div>
-                        <p className="text-base">TTL LIQUIDITY</p>
-                        <p>
+                        <p className="text-base font-bold text-white poolAttributes">
+                            TTL LIQUIDITY
+                        </p>
+                        <p className="poolAttributes">
                             {liquidity ? Math.floor(Number(liquidity) / 10 ** 36).toString() : ""}
                         </p>
                     </div>

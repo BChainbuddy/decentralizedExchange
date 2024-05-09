@@ -37,7 +37,7 @@ export default function UserContributions({
 
     return (
         <>
-            <section className="mx-auto flex flex-col text-white/75 place-items-center shadow-xl shadow-slate-800/90 hover:shadow-2xl mt-24 space-y-12  w-5/12 py-8 px-2 rounded-xl bg-gray-700 border-8 border-gray-600 pb-10">
+            <section className="mx-auto flex flex-col text-white/75 place-items-center mt-24 space-y-12  w-5/12 py-8 px-2 rounded-xl pb-10 userContributions">
                 <p className="text-center text-2xl text-white">YOUR CONTRIBUTIONS:</p>
                 {isConnected ? (
                     <>

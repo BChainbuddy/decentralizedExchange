@@ -53,7 +53,7 @@ export default function Dex() {
     return (
         <main className={`${monserrat.className} flex-1 flex justify-center items-center`}>
             <div className="shadow-cyan-500 w-[450px] space-y-1 mt-16 py-10 text-gray-400 p-10 text-center flex flex-col rounded-xl shadow-2xl transition duration-200 mb-8">
-                <p className="text-2xl mb-4">Exchange Tokens</p>
+                <p className="text-2xl mb-4 text-white textShadow">TOKEN EXCHANGE</p>
                 <div className="flex flex-col">
                     <p className="ml-2 text-left">Input</p>
                     <DexInput

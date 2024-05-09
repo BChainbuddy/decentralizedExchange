@@ -3,12 +3,13 @@
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import ConnectButton from "./ConnectButton"
+import Network from "./Network"
 
 export function Header() {
     const pathname = usePathname()
 
     return (
-        <header className="justify-between flex flex-row items-center p-6">
+        <header className="justify-between flex flex-row items-center py-6 pl-6 pr-0">
             <div className="relative">
                 <Link href="/">
                     <p className="text-gray-400 text-4xl font-bold">SEA SWAP</p>
@@ -22,6 +23,7 @@ export function Header() {
                 >
                     {pathname === "/dex" ? "LIQUIDITY POOLS" : "EXCHANGE"}
                 </Link>
+                <Network />
                 <ConnectButton />
             </div>
         </header>

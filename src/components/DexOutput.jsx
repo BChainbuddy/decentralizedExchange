@@ -6,6 +6,7 @@ import SWAPROUTER_ABI from "../constants/DexAbi.json"
 import { useState } from "react"
 import { useReadContract } from "wagmi"
 import { ethers } from "ethers"
+import { shortenSymbol } from "@/utils/shortenSymbol"
 
 export default function DexOutput({
     tokenList,
@@ -15,11 +16,6 @@ export default function DexOutput({
     setChosenTokenOutput
 }) {
     const [modal, showModal] = useState(false)
-
-    function shortenSymbol(longSymbol) {
-        const newSymbol = longSymbol.substring(0, 5).toString() + ".."
-        return newSymbol
-    }
 
     const openModal = () => {
         showModal(true)
@@ -62,7 +58,7 @@ export default function DexOutput({
                     onClick={openModal}
                 >
                     {chosenTokenOutput.symbol.length > 6
-                        ? shortenSymbol(chosenTokenOutput.symbol)
+                        ? shortenSymbol(chosenTokenOutput.symbol, 5)
                         : chosenTokenOutput.symbol}
                 </button>
             </div>

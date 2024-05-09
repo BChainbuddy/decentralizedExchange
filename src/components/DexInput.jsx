@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import TokenList from "./TokenList"
+import { shortenSymbol } from "@/utils/shortenSymbol"
 
 export default function DexInput({
     tokenList,
@@ -10,11 +11,6 @@ export default function DexInput({
     setInputAmount
 }) {
     const [modal, showModal] = useState(false)
-
-    function shortenSymbol(longSymbol) {
-        const newSymbol = longSymbol.substring(0, 5).toString() + ".."
-        return newSymbol
-    }
 
     const openModal = () => {
         showModal(true)
@@ -50,7 +46,7 @@ export default function DexInput({
                     onClick={openModal}
                 >
                     {chosenTokenInput.symbol.length > 6
-                        ? shortenSymbol(chosenTokenInput.symbol)
+                        ? shortenSymbol(chosenTokenInput.symbol, 5)
                         : chosenTokenInput.symbol}
                 </button>
             </div>

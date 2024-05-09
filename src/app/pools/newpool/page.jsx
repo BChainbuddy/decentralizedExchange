@@ -64,7 +64,9 @@ export default function NewPool() {
         <div
             className={`${monserrat.className} flex flex-col items-center justify-center text-gray-400 `}
         >
-            <p className="text-2xl mt-12 border-b px-3 pb-1">DEPLOY A NEW POOL</p>
+            <p className="text-2xl mt-12 border-b px-3 pb-1 text-white textShadow">
+                DEPLOY A NEW POOL
+            </p>
             <div className="w-[500px] mt-3">
                 <p className="text-sm">
                     To deploy a new pool you need to input two tokens of your choice that can then
