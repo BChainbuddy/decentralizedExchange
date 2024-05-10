@@ -56,12 +56,16 @@ export default function HomePage() {
                         isOnLeft={true}
                     />
                 </div>
-                <div id="Services" className="w-full text-center mt-44">
+                <div id="Services" className="w-full text-center mt-36">
                     <p className="text-3xl textShadow text-white">START WITH OUR SERVICES</p>
                     <div className="flex flex-row justify-center items-center space-x-10 mt-10 textShadow">
                         <ServiceButton name={"DEX"} path={"/dex"} />
                         <ServiceButton name={"POOLS"} path={"/pools"} />
                     </div>
+                </div>
+                <div className="mt-20 text-center">
+                    <p className="text-gray-400 text-lg">Currently available on</p>
+                    <p className="text-white textShadow text-xl mt-1">SEPOLIA TESTNET</p>
                 </div>
             </div>
             <Footer />
