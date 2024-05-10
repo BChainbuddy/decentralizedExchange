@@ -224,3 +224,7 @@ footer {
 .modal {
     border: 4px solid #26c6da;
 }
+
+.networkText {
+    font-size: 10px;
+}
