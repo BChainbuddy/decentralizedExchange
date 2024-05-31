@@ -94,6 +94,33 @@ body {
     flex-direction: column;
 }
 
+@keyframes appearPopup {
+    0% {
+        opacity: 0;
+        transform: translateX(50px);
+    }
+    10% {
+        opacity: 1;
+        transform: translateX(0px);
+    }
+    20% {
+        background-position: 100% 0;
+        background-size: 200% 100%;
+    }
+    80% {
+        background-position: 0 0;
+    }
+    90% {
+        opacity: 1;
+        transform: translateX(0px);
+    }
+    100% {
+        opacity: 0;
+        transform: translateX(50px);
+        background-position: 0 0;
+    }
+}
+
 @keyframes fillBorder {
     90% {
         background-position: 0 0;
